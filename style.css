@@ -28,11 +28,11 @@
         color: #333;
       }
 
-      form {
+      /* form {
         display: grid;
         grid-template-columns: repeat(2, minmax(220px, 1fr));
         gap: 20px;
-      }
+      } */
 
       form[hidden] {
         display: none;
@@ -76,7 +76,7 @@
       }
 
       input:focus {
-        border-color: #4a90e2;
+        border-color: #568e5b;
         box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.15);
       }
 
@@ -86,7 +86,7 @@
         padding: 12px 20px;
         border: none;
         border-radius: 8px;
-        background: #2e6ae6;
+        background: #568e5b;
         color: #fff;
         font-size: 16px;
         font-weight: 700;
@@ -94,7 +94,7 @@
       }
 
       button:hover {
-        background: #1f57c9;
+        background: #568e5b;
       }
 
       .summary h2 {
