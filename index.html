@@ -4,13 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Inscription</title>
- 
+    <link rel="stylesheet" href="style.css" />
+    <script src="script.js" defer></script>
   </head>
   <body>
     <div class="form-container">
       <h1>Inscription</h1>
 
-      <form>
+      <form id="registration-form" novalidate>
+        <div id="error-message" class="error-message" role="alert" aria-live="polite" hidden></div>
+
         <div class="field">
           <label for="login">Login</label>
           <input type="text" id="login" name="login" required />
@@ -58,6 +61,11 @@
 
         <button type="submit">S’inscrire</button>
       </form>
+
+      <section id="summary" class="summary" aria-labelledby="summary-title" hidden>
+        <h2 id="summary-title">Récapitulatif de votre inscription</h2>
+        <dl id="summary-list"></dl>
+      </section>
     </div>
   </body>
 </html>
