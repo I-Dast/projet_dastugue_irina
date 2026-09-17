@@ -1,24 +1,31 @@
 <!DOCTYPE html>
 <html lang="fr">
   <head>
+    <!-- Définit l'encodage et l'adaptation de la page aux écrans mobiles. -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Inscription</title>
+    <!-- Charge les styles et le script de validation du formulaire. -->
     <link rel="stylesheet" href="style.css" />
     <script src="script.js" defer></script>
   </head>
   <body>
+    <!-- Conteneur principal de la page d'inscription. -->
     <div class="form-container">
       <h1>Inscription</h1>
 
+      <!-- Formulaire contrôlé par script.js sans validation native du navigateur. -->
       <form id="registration-form" novalidate>
+        <!-- Zone réservée aux messages d'erreur, masquée par défaut. -->
         <div id="error-message" class="error-message" role="alert" aria-live="polite" hidden></div>
 
+        <!-- Identifiant de connexion. -->
         <div class="field">
           <label for="login">Login</label>
           <input type="text" id="login" name="login" required />
         </div>
 
+        <!-- Mot de passe et confirmation, utilisés uniquement pour la validation. -->
         <div class="field">
           <label for="password">Mot de passe</label>
           <input type="password" id="password" name="password" required />
@@ -29,6 +36,7 @@
           <input type="password" id="confirm-password" name="confirm-password" required />
         </div>
 
+        <!-- Informations personnelles de l'utilisateur. -->
         <div class="field">
           <label for="nom">Nom</label>
           <input type="text" id="nom" name="nom" required />
@@ -54,6 +62,7 @@
           <input type="text" id="telephone" name="telephone" required />
         </div>
 
+        <!-- Date de naissance et validation de l'inscription. -->
         <div class="field full-width">
           <label for="date-naissance">Date de naissance</label>
           <input type="date" id="date-naissance" name="date-naissance" required />
@@ -62,6 +71,7 @@
         <button type="submit">S’inscrire</button>
       </form>
 
+      <!-- Récapitulatif affiché après une validation réussie. -->
       <section id="summary" class="summary" aria-labelledby="summary-title" hidden>
         <h2 id="summary-title">Récapitulatif de votre inscription</h2>
         <dl id="summary-list"></dl>
