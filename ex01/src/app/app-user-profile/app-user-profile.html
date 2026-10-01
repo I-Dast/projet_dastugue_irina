@@ -1,0 +1,127 @@
+<main class="page">
+  <section class="signup-card" aria-labelledby="signup-title">
+    <header class="card-header">
+      <p class="eyebrow">Créer un compte</p>
+      <h1 id="signup-title">Inscription</h1>
+      <p class="intro">Renseignez vos informations pour créer votre profil.</p>
+    </header>
+
+    <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" novalidate>
+      <div class="field">
+        <label for="login">Login</label>
+        <input
+          id="login"
+          name="login"
+          type="text"
+          autocomplete="username"
+          formControlName="login"
+          required
+          [attr.aria-invalid]="signupForm.controls.login.invalid && (signupForm.controls.login.touched || submitted)"
+          [attr.aria-describedby]="signupForm.controls.login.invalid && (signupForm.controls.login.touched || submitted) ? 'login-error' : null"
+        />
+        @if (signupForm.controls.login.invalid && (signupForm.controls.login.touched || submitted)) {
+          <span class="error" id="login-error">Le login est requis.</span>
+        }
+      </div>
+
+      <div class="field">
+        <label for="password">Mot de passe</label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          autocomplete="new-password"
+          formControlName="password"
+          required
+          [attr.aria-invalid]="signupForm.controls.password.invalid && (signupForm.controls.password.touched || submitted)"
+          [attr.aria-describedby]="signupForm.controls.password.invalid && (signupForm.controls.password.touched || submitted) ? 'password-error' : null"
+        />
+        @if (signupForm.controls.password.invalid && (signupForm.controls.password.touched || submitted)) {
+          <span class="error" id="password-error">Le mot de passe est requis.</span>
+        }
+      </div>
+
+      <div class="field">
+        <label for="passwordConfirmation">Confirmation du mot de passe</label>
+        <input
+          id="passwordConfirmation"
+          name="passwordConfirmation"
+          type="password"
+          autocomplete="new-password"
+          [(ngModel)]="passwordConfirmation"
+          [ngModelOptions]="{ standalone: true }"
+          #confirmationModel="ngModel"
+          required
+          [attr.aria-invalid]="(confirmationModel.invalid && (confirmationModel.touched || submitted)) || passwordConfirmationMismatch"
+          [attr.aria-describedby]="(confirmationModel.invalid && (confirmationModel.touched || submitted)) || passwordConfirmationMismatch ? 'password-confirmation-error' : null"
+        />
+        @if (passwordConfirmationRequired || (confirmationModel.invalid && (confirmationModel.touched || submitted))) {
+          <span class="error" id="password-confirmation-error">La confirmation du mot de passe est requise.</span>
+        } @else if (passwordConfirmationMismatch) {
+          <span class="error" id="password-confirmation-error">Les mots de passe ne correspondent pas.</span>
+        }
+      </div>
+
+      <div class="name-fields">
+        <div class="field">
+          <label for="lastName">Nom</label>
+          <input
+            id="lastName"
+            name="lastName"
+            type="text"
+            autocomplete="family-name"
+            formControlName="lastName"
+            required
+            [attr.aria-invalid]="signupForm.controls.lastName.invalid && (signupForm.controls.lastName.touched || submitted)"
+            [attr.aria-describedby]="signupForm.controls.lastName.invalid && (signupForm.controls.lastName.touched || submitted) ? 'lastName-error' : null"
+          />
+          @if (signupForm.controls.lastName.invalid && (signupForm.controls.lastName.touched || submitted)) {
+            <span class="error" id="lastName-error">Le nom est requis.</span>
+          }
+        </div>
+
+        <div class="field">
+          <label for="firstName">Prénom</label>
+          <input
+            id="firstName"
+            name="firstName"
+            type="text"
+            autocomplete="given-name"
+            formControlName="firstName"
+            required
+            [attr.aria-invalid]="signupForm.controls.firstName.invalid && (signupForm.controls.firstName.touched || submitted)"
+            [attr.aria-describedby]="signupForm.controls.firstName.invalid && (signupForm.controls.firstName.touched || submitted) ? 'firstName-error' : null"
+          />
+          @if (signupForm.controls.firstName.invalid && (signupForm.controls.firstName.touched || submitted)) {
+            <span class="error" id="firstName-error">Le prénom est requis.</span>
+          }
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          autocomplete="email"
+          formControlName="email"
+          required
+          [attr.aria-invalid]="signupForm.controls.email.invalid && (signupForm.controls.email.touched || submitted)"
+          [attr.aria-describedby]="signupForm.controls.email.invalid && (signupForm.controls.email.touched || submitted) ? 'email-error' : null"
+        />
+        @if (signupForm.controls.email.invalid && (signupForm.controls.email.touched || submitted)) {
+          <span class="error" id="email-error">
+            {{ signupForm.controls.email.hasError('required') ? "L'email est requis." : "L'adresse email n'est pas valide." }}
+          </span>
+        }
+      </div>
+
+      <button type="submit">Créer mon compte</button>
+
+      @if (successMessage) {
+        <p class="success" role="status">{{ successMessage }}</p>
+      }
+    </form>
+  </section>
+</main>
