@@ -1,0 +1,13 @@
+<select
+  id="typePollution"
+  [value]="value"
+  [disabled]="disabled"
+  (change)="onSelectionChange($event)"
+  (blur)="markAsTouched()"
+  required
+>
+  <option value="" disabled>Sélectionner un type</option>
+  @for (type of types; track type) {
+    <option [value]="type">{{ type }}</option>
+  }
+</select>
