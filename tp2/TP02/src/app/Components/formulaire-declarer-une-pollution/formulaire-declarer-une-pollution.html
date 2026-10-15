@@ -1,0 +1,213 @@
+@if (declarationData; as declaration) {
+  <app-recapitulatif-pollution-declaree [pollution]="declaration" />
+} @else {
+  <main class="declaration-page">
+    <form class="pollution-form" [formGroup]="profileForm" (ngSubmit)="submitDeclaration()">
+      <header class="form-header">
+        <h1>Déclarer une pollution</h1>
+        <p>Merci de fournir les informations suivantes pour nous aider à localiser et traiter la pollution.</p>
+      </header>
+
+      <!-- Titre de la pollution -->
+      <div class="form-field">
+        <label for="titreDeclarationDePollution">
+          Titre de la pollution <span class="required-marker" aria-hidden="true">*</span>
+        </label>
+        <input
+          type="text"
+          id="titreDeclarationDePollution"
+          formControlName="titreDeclarationDePollution"
+          placeholder="Ex : Dépôt sauvage de déchets"
+          required
+          minlength="3"
+        >
+        @if (profileForm.controls.titreDeclarationDePollution.touched ||
+             profileForm.controls.titreDeclarationDePollution.dirty) {
+          @if (profileForm.controls.titreDeclarationDePollution.hasError('required')) {
+            <p class="field-error" role="alert">Le titre est requis.</p>
+          }
+          @if (profileForm.controls.titreDeclarationDePollution.hasError('minlength')) {
+            <p class="field-error" role="alert">Le titre doit contenir au moins 3 caractères.</p>
+          }
+          @if (profileForm.controls.titreDeclarationDePollution.hasError('pattern')) {
+            <p class="field-error" role="alert">Utilisez uniquement des lettres, des chiffres et des espaces.</p>
+          }
+        }
+      </div>
+
+      <!-- Type de pollution - liste déroulante -->
+      <div class="form-field">
+        <label for="typePollution">
+          Type de pollution <span class="required-marker" aria-hidden="true">*</span>
+        </label>
+        <app-type-pollution formControlName="typePollution" />
+        <small class="field-hint">Plastique · Chimique · Dépôt sauvage · Eau · Air · Autre</small>
+        @if (profileForm.controls.typePollution.touched &&
+             profileForm.controls.typePollution.hasError('required')) {
+          <p class="field-error" role="alert">Le type de pollution est requis.</p>
+        }
+      </div>
+
+      <!-- Description -->
+      <div class="form-field">
+        <label for="description">
+          Description <span class="required-marker" aria-hidden="true">*</span>
+        </label>
+        <textarea
+          id="description"
+          formControlName="description"
+          placeholder="Décrivez la nature de la pollution, sa taille approximative et tout détail utile..."
+          required
+          minlength="10"
+          maxlength="500"
+        ></textarea>
+        @if (profileForm.controls.description.touched || profileForm.controls.description.dirty) {
+          @if (profileForm.controls.description.hasError('required')) {
+            <p class="field-error" role="alert">La description est requise.</p>
+          }
+          @if (profileForm.controls.description.hasError('minlength')) {
+            <p class="field-error" role="alert">La description doit contenir au moins 10 caractères.</p>
+          }
+          @if (profileForm.controls.description.hasError('maxlength')) {
+            <p class="field-error" role="alert">La description ne peut pas dépasser 500 caractères, espaces compris.</p>
+          }
+          @if (profileForm.controls.description.hasError('pattern')) {
+            <p class="field-error" role="alert">
+              La description doit contenir autre chose que des espaces et ne peut pas contenir les caractères &lt;, &gt;, § ou $.
+            </p>
+          }
+        }
+      </div>
+
+      <!-- Date de l’observation -->
+      <div class="form-field">
+        <label for="dateObservation">
+          Date de l’observation <span class="required-marker" aria-hidden="true">*</span>
+        </label>
+        <input
+          type="date"
+          id="dateObservation"
+          formControlName="dateObservation"
+          [max]="maxObservationDate"
+          required
+        >
+        @if (profileForm.controls.dateObservation.touched ||
+             profileForm.controls.dateObservation.dirty) {
+          @if (profileForm.controls.dateObservation.hasError('required')) {
+            <p class="field-error" role="alert">La date de l’observation est requise.</p>
+          }
+          @if (profileForm.controls.dateObservation.hasError('dateFormat')) {
+            <p class="field-error" role="alert">Saisissez une date valide au format jj/mm/aaaa.</p>
+          }
+          @if (profileForm.controls.dateObservation.hasError('futureDate')) {
+            <p class="field-error" role="alert">La date de l’observation ne peut pas être dans le futur.</p>
+          }
+        }
+      </div>
+
+      <!-- Lieu -->
+      <div class="form-field">
+        <label for="lieu">
+          Lieu <span class="required-marker" aria-hidden="true">*</span>
+        </label>
+        <input type="text" id="lieu" formControlName="lieu" placeholder="Ville, rue, commune" required>
+        @if (profileForm.controls.lieu.touched || profileForm.controls.lieu.dirty) {
+          @if (profileForm.controls.lieu.hasError('required')) {
+            <p class="field-error" role="alert">Le lieu est requis.</p>
+          }
+          @if (profileForm.controls.lieu.hasError('pattern')) {
+            <p class="field-error" role="alert">Utilisez uniquement des lettres, des espaces et des tirets.</p>
+          }
+        }
+      </div>
+
+      <!-- Coordonnées géographiques -->
+      <div class="coordinates-grid">
+        <div class="form-field">
+          <label for="latitude">
+            Latitude <span class="required-marker" aria-hidden="true">*</span>
+          </label>
+          <input
+            type="number"
+            id="latitude"
+            formControlName="latitude"
+            placeholder="Ex : 48.8566"
+            min="-90"
+            max="90"
+            step="any"
+            required
+          >
+          @if (profileForm.controls.latitude.touched || profileForm.controls.latitude.dirty) {
+            @if (profileForm.controls.latitude.hasError('required')) {
+              <p class="field-error" role="alert">La latitude est requise.</p>
+            }
+            @if (profileForm.controls.latitude.hasError('number')) {
+              <p class="field-error" role="alert">La latitude doit être un nombre valide.</p>
+            }
+            @if (profileForm.controls.latitude.hasError('min') ||
+                 profileForm.controls.latitude.hasError('max')) {
+              <p class="field-error" role="alert">La latitude doit être comprise entre -90 et 90.</p>
+            }
+          }
+        </div>
+
+        <div class="form-field">
+          <label for="longitude">
+            Longitude <span class="required-marker" aria-hidden="true">*</span>
+          </label>
+          <input
+            type="number"
+            id="longitude"
+            formControlName="longitude"
+            placeholder="Ex : 2.3522"
+            min="-180"
+            max="180"
+            step="any"
+            required
+          >
+          @if (profileForm.controls.longitude.touched || profileForm.controls.longitude.dirty) {
+            @if (profileForm.controls.longitude.hasError('required')) {
+              <p class="field-error" role="alert">La longitude est requise.</p>
+            }
+            @if (profileForm.controls.longitude.hasError('number')) {
+              <p class="field-error" role="alert">La longitude doit être un nombre valide.</p>
+            }
+            @if (profileForm.controls.longitude.hasError('min') ||
+                 profileForm.controls.longitude.hasError('max')) {
+              <p class="field-error" role="alert">La longitude doit être comprise entre -180 et 180.</p>
+            }
+          }
+        </div>
+      </div>
+
+      <!-- Géolocalisation -->
+      <button class="geolocate-button" type="button" (click)="locateDevice()" [disabled]="isLocating">
+        {{ isLocating ? 'Géolocalisation en cours…' : 'Géolocaliser' }}
+      </button>
+      @if (locationErrorMessage) {
+        <p class="field-error" role="alert">{{ locationErrorMessage }}</p>
+      }
+
+      <!-- Photo URL -->
+      <div class="form-field photo-field">
+        <label for="photoUrl">
+          Photo (URL) <span class="optional-label">optionnel</span>
+        </label>
+        <input
+          type="url"
+          id="photoUrl"
+          formControlName="photoUrl"
+          placeholder="https://example.com/image.jpg"
+        >
+        @if ((profileForm.controls.photoUrl.touched || profileForm.controls.photoUrl.dirty) &&
+             profileForm.controls.photoUrl.hasError('url')) {
+          <p class="field-error" role="alert">Saisissez une URL valide commençant par http:// ou https://.</p>
+        }
+      </div>
+
+      <button class="submit-button" type="submit" [disabled]="profileForm.invalid">
+        Déclarer
+      </button>
+    </form>
+  </main>
+}

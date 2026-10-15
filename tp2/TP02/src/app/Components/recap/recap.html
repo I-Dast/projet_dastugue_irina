@@ -1,0 +1,54 @@
+<main class="recap-page">
+  <section class="recap-card" aria-labelledby="recap-title">
+    <header class="recap-header">
+      <h1 id="recap-title">Pollution déclarée</h1>
+      <p>Voici le récapitulatif des informations transmises.</p>
+    </header>
+
+    <dl class="recap-details">
+      <div class="recap-item recap-item--full">
+        <dt>Titre de la pollution</dt>
+        <dd>{{ pollution.titreDeclarationDePollution }}</dd>
+      </div>
+
+      <div class="recap-item">
+        <dt>Type de pollution</dt>
+        <dd>{{ pollution.typePollution }}</dd>
+      </div>
+
+      <div class="recap-item">
+        <dt>Date de l’observation</dt>
+        <dd>{{ formatDate(pollution.dateObservation) }}</dd>
+      </div>
+
+      <div class="recap-item recap-item--full">
+        <dt>Description</dt>
+        <dd class="description-value">{{ pollution.description }}</dd>
+      </div>
+
+      <div class="recap-item recap-item--full">
+        <dt>Lieu</dt>
+        <dd>{{ pollution.lieu }}</dd>
+      </div>
+
+      <div class="recap-item">
+        <dt>Latitude</dt>
+        <dd>{{ pollution.latitude }}</dd>
+      </div>
+
+      <div class="recap-item">
+        <dt>Longitude</dt>
+        <dd>{{ pollution.longitude }}</dd>
+      </div>
+    </dl>
+
+    <section class="photo-section" aria-labelledby="photo-title">
+      <h2 id="photo-title">Photo</h2>
+      @if (pollution.photoUrl) {
+        <img [src]="pollution.photoUrl" [alt]="'Photo de ' + pollution.titreDeclarationDePollution">
+      } @else {
+        <p class="no-photo">Aucune photo n’a été fournie.</p>
+      }
+    </section>
+  </section>
+</main>
