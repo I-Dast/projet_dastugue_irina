@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { finalize } from 'rxjs';
 import { SignupRequest, SignupService } from '../../services/signup';
 
 @Component({
@@ -46,23 +47,24 @@ export class Signup {
 
     // Le composant récupère les valeurs puis délègue l'appel HTTP au service injecté.
     const data: SignupRequest = this.form.getRawValue();
-    this.signupService.signup(data).subscribe({
-      next: (response) => {
-        // La réponse du service est utilisée pour afficher le résultat à l'utilisateur.
-        this.successMessage = response.message;
-        this.isSubmitting = false;
-        this.form.reset();
-      },
-      error: (error: unknown) => {
-        // Le composant gère l'affichage d'erreur ; il ne construit pas la requête HTTP.
-        const message =
-          error instanceof HttpErrorResponse ? error.error?.message : null;
-        this.errorMessage =
-          typeof message === 'string'
-            ? message
-            : 'Une erreur est survenue. Veuillez réessayer.';
-        this.isSubmitting = false;
-      },
-    });
+    this.signupService
+      .signup(data)
+      .pipe(finalize(() => (this.isSubmitting = false)))
+      .subscribe({
+        next: () => {
+          // La réponse du service confirme l'enregistrement dans JSON Server.
+          this.successMessage = 'Inscription enregistrée avec succès.';
+          this.form.reset();
+        },
+        error: (error: unknown) => {
+          // Le composant gère l'affichage d'erreur ; il ne construit pas la requête HTTP.
+          const message =
+            error instanceof HttpErrorResponse ? error.error?.message : null;
+          this.errorMessage =
+            typeof message === 'string'
+              ? message
+              : 'Impossible de contacter le serveur. Vérifiez que JSON Server fonctionne sur le port 3000.';
+        },
+      });
   }
 }

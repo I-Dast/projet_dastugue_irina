@@ -34,12 +34,13 @@ describe('SignupService', () => {
       password: 'password123',
     };
     service.signup(data).subscribe((response) => {
-      expect(response.message).toBe('Inscription réussie.');
+      expect(response.id).toBe('1');
+      expect(response.email).toBe(data.email);
     });
 
-    const request = httpTesting.expectOne(`${environment.apiUrl}/auth/signup`);
+    const request = httpTesting.expectOne(`${environment.apiUrl}/users`);
     expect(request.request.method).toBe('POST');
     expect(request.request.body).toEqual(data);
-    request.flush({ message: 'Inscription réussie.' });
+    request.flush({ id: '1', ...data });
   });
 });

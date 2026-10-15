@@ -1,13 +1,12 @@
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideHttpClient } from '@angular/common/http';
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
-import { signupMockInterceptor } from './mocks/signup-mock.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    // Active HttpClient et branche le mock qui simule l'API faute de backend.
-    provideHttpClient(withInterceptors([signupMockInterceptor])),
+    // Utilise le vrai serveur JSON Server, lancé séparément sur le port 3000.
+    provideHttpClient(),
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
   ]

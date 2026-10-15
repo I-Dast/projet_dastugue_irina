@@ -12,7 +12,10 @@ export interface SignupRequest {
 
 // Forme de la réponse attendue de l'API/mock.
 export interface SignupResponse {
-  message: string;
+  id: string | number;
+  name: string;
+  email: string;
+  password: string;
 }
 
 // providedIn: 'root' rend le service injectable dans toute l'application.
