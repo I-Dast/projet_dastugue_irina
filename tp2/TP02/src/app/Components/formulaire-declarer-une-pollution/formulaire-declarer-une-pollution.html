@@ -8,6 +8,7 @@
         <p>Merci de fournir les informations suivantes pour nous aider à localiser et traiter la pollution.</p>
       </header>
 
+      <!-- Titre de la pollution -->
       <div class="form-field">
         <label for="titreDeclarationDePollution">
           Titre de la pollution <span class="required-marker" aria-hidden="true">*</span>
@@ -34,6 +35,7 @@
         }
       </div>
 
+      <!-- Type de pollution - liste déroulante -->
       <div class="form-field">
         <label for="typePollution">
           Type de pollution <span class="required-marker" aria-hidden="true">*</span>
@@ -46,6 +48,7 @@
         }
       </div>
 
+      <!-- Description -->
       <div class="form-field">
         <label for="description">
           Description <span class="required-marker" aria-hidden="true">*</span>
@@ -76,6 +79,7 @@
         }
       </div>
 
+      <!-- Date de l’observation -->
       <div class="form-field">
         <label for="dateObservation">
           Date de l’observation <span class="required-marker" aria-hidden="true">*</span>
@@ -101,6 +105,7 @@
         }
       </div>
 
+      <!-- Lieu -->
       <div class="form-field">
         <label for="lieu">
           Lieu <span class="required-marker" aria-hidden="true">*</span>
@@ -116,6 +121,7 @@
         }
       </div>
 
+      <!-- Coordonnées géographiques -->
       <div class="coordinates-grid">
         <div class="form-field">
           <label for="latitude">
@@ -174,6 +180,7 @@
         </div>
       </div>
 
+      <!-- Géolocalisation -->
       <button class="geolocate-button" type="button" (click)="locateDevice()" [disabled]="isLocating">
         {{ isLocating ? 'Géolocalisation en cours…' : 'Géolocaliser' }}
       </button>
@@ -181,6 +188,7 @@
         <p class="field-error" role="alert">{{ locationErrorMessage }}</p>
       }
 
+      <!-- Photo URL -->
       <div class="form-field photo-field">
         <label for="photoUrl">
           Photo (URL) <span class="optional-label">optionnel</span>

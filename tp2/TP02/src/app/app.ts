@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { FormulaireDeclarerUnePollution } from './formulaire-declarer-une-pollution/formulaire-declarer-une-pollution';
+import { FormulaireDeclarerUnePollution } from './Components/formulaire-declarer-une-pollution/formulaire-declarer-une-pollution';
 
 @Component({
   imports: [RouterOutlet, FormulaireDeclarerUnePollution],
