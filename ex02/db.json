@@ -5,6 +5,12 @@
       "email": "test@test.fr",
       "password": "testtest",
       "id": "QTQ2awsGXF8"
+    },
+    {
+      "name": "sdfgbn",
+      "email": "tes@test.fr",
+      "password": "123456789",
+      "id": "T9GSy5qqgXc"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
