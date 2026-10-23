@@ -1,0 +1,171 @@
+<main class="page">
+  <a class="back-link" routerLink="/">← Retour à la liste</a>
+
+  @if (isLoading()) {
+    <p class="message" role="status">Chargement du détail…</p>
+  } @else if (errorMessage()) {
+    <p class="message message--error" role="alert">{{ errorMessage() }}</p>
+  } @else if (pollution(); as item) {
+    <article class="detail-card">
+      <header class="detail-header">
+        <div>
+          <p class="eyebrow">Détail d’une pollution</p>
+          <h1>{{ item.titreDeclarationDePollution }}</h1>
+        </div>
+        <span class="badge">{{ item.typePollution }}</span>
+      </header>
+
+      @if (!isEditing()) {
+        <div class="detail-actions">
+          @if (item.id !== undefined) {
+            <button type="button" (click)="startEditing()">Modifier</button>
+            <button
+              class="button-danger"
+              type="button"
+              [disabled]="isDeleting()"
+              (click)="deletePollution()"
+            >
+              {{ isDeleting() ? 'Suppression…' : 'Supprimer' }}
+            </button>
+          }
+          @if (deleteErrorMessage()) {
+            <p class="message message--error" role="alert">{{ deleteErrorMessage() }}</p>
+          }
+          @if (saveSuccessMessage()) {
+            <p class="message message--success" role="status">{{ saveSuccessMessage() }}</p>
+          }
+        </div>
+      }
+
+      @if (isEditing()) {
+        <form class="edit-form" [formGroup]="editForm" (ngSubmit)="saveChanges()">
+          <div class="field">
+            <label for="edit-titre">Titre</label>
+            <input id="edit-titre" type="text" formControlName="titreDeclarationDePollution">
+            @if (editForm.controls.titreDeclarationDePollution.touched &&
+                 editForm.controls.titreDeclarationDePollution.hasError('required')) {
+              <small class="field-error">Le titre est obligatoire.</small>
+            } @else if (editForm.controls.titreDeclarationDePollution.touched &&
+                        editForm.controls.titreDeclarationDePollution.hasError('minlength')) {
+              <small class="field-error">Le titre doit contenir au moins 3 caractères.</small>
+            }
+          </div>
+
+          <div class="field">
+            <label for="edit-type">Type de pollution</label>
+            <select id="edit-type" formControlName="typePollution">
+              <option value="" disabled>Choisissez un type</option>
+              @for (type of typesPollution; track type) {
+                <option [value]="type">{{ type }}</option>
+              }
+            </select>
+            @if (editForm.controls.typePollution.touched &&
+                 editForm.controls.typePollution.hasError('required')) {
+              <small class="field-error">Le type de pollution est obligatoire.</small>
+            }
+          </div>
+
+          <div class="field">
+            <label for="edit-description">Description</label>
+            <textarea id="edit-description" rows="4" formControlName="description"></textarea>
+            @if (editForm.controls.description.touched &&
+                 editForm.controls.description.hasError('required')) {
+              <small class="field-error">La description est obligatoire.</small>
+            } @else if (editForm.controls.description.touched &&
+                        editForm.controls.description.hasError('minlength')) {
+              <small class="field-error">La description doit contenir au moins 10 caractères.</small>
+            } @else if (editForm.controls.description.touched &&
+                        editForm.controls.description.hasError('maxlength')) {
+              <small class="field-error">La description ne peut pas dépasser 500 caractères.</small>
+            }
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="edit-dateObservation">Date de l’observation</label>
+              <input id="edit-dateObservation" type="date" formControlName="dateObservation">
+            </div>
+            <div class="field">
+              <label for="edit-lieu">Lieu</label>
+              <input id="edit-lieu" type="text" formControlName="lieu">
+            </div>
+          </div>
+
+          <fieldset>
+            <legend>Coordonnées</legend>
+            <div class="field-row">
+              <div class="field">
+                <label for="edit-latitude">Latitude</label>
+                <input id="edit-latitude" type="number" min="-90" max="90" step="any" formControlName="latitude">
+              </div>
+              <div class="field">
+                <label for="edit-longitude">Longitude</label>
+                <input id="edit-longitude" type="number" min="-180" max="180" step="any" formControlName="longitude">
+              </div>
+            </div>
+          </fieldset>
+
+          <button
+            class="geolocate-button"
+            type="button"
+            [disabled]="isLocating()"
+            (click)="locateDevice()"
+          >
+            {{ isLocating() ? 'Géolocalisation en cours…' : 'Utiliser ma position' }}
+          </button>
+          @if (locationErrorMessage()) {
+            <p class="field-error" role="alert">{{ locationErrorMessage() }}</p>
+          }
+
+          <div class="field">
+            <label for="edit-photoUrl">URL de la photo (facultatif)</label>
+            <input id="edit-photoUrl" type="url" formControlName="photoUrl">
+          </div>
+
+          @if (saveErrorMessage()) {
+            <p class="message message--error" role="alert">{{ saveErrorMessage() }}</p>
+          }
+
+          <div class="form-actions">
+            <button type="submit" [disabled]="isSaving()">
+              {{ isSaving() ? 'Enregistrement…' : 'Enregistrer les modifications' }}
+            </button>
+            <button class="button-secondary" type="button" [disabled]="isSaving()" (click)="cancelEditing()">
+              Annuler
+            </button>
+          </div>
+        </form>
+      } @else {
+      <dl class="detail-grid">
+        <div class="detail-item detail-item--full">
+          <dt>Description</dt>
+          <dd>{{ item.description }}</dd>
+        </div>
+        <div class="detail-item">
+          <dt>Date de l’observation</dt>
+          <dd>{{ formatDate(item.dateObservation) }}</dd>
+        </div>
+        <div class="detail-item">
+          <dt>Lieu</dt>
+          <dd>{{ item.lieu }}</dd>
+        </div>
+        <div class="detail-item">
+          <dt>Latitude</dt>
+          <dd>{{ item.latitude }}</dd>
+        </div>
+        <div class="detail-item">
+          <dt>Longitude</dt>
+          <dd>{{ item.longitude }}</dd>
+        </div>
+      </dl>
+
+      @if (item.photoUrl) {
+        <section class="photo-section" aria-labelledby="photo-title">
+          <h2 id="photo-title">Photo</h2>
+          <img [src]="item.photoUrl" [alt]="'Photo de ' + item.titreDeclarationDePollution">
+        </section>
+      }
+      }
+    </article>
+  }
+</main>

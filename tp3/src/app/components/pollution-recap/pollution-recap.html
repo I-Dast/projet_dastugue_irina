@@ -1,0 +1,59 @@
+<section
+  class="dialog"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="recap-title"
+  (click)="$event.stopPropagation()"
+>
+    <header class="recap-header">
+      <div>
+        <h2 id="recap-title">Pollution déclarée</h2>
+        <p>Voici le récapitulatif des informations enregistrées.</p>
+      </div>
+      <button class="close-button" type="button" aria-label="Fermer le récapitulatif" (click)="close.emit()">
+        ×
+      </button>
+    </header>
+
+    <dl class="recap-details">
+      <div class="recap-item recap-item--full">
+        <dt>Titre de la pollution</dt>
+        <dd>{{ pollution().titreDeclarationDePollution }}</dd>
+      </div>
+      <div class="recap-item">
+        <dt>Type de pollution</dt>
+        <dd>{{ pollution().typePollution }}</dd>
+      </div>
+      <div class="recap-item">
+        <dt>Date de l’observation</dt>
+        <dd>{{ formatDate(pollution().dateObservation) }}</dd>
+      </div>
+      <div class="recap-item recap-item--full">
+        <dt>Description</dt>
+        <dd class="description">{{ pollution().description }}</dd>
+      </div>
+      <div class="recap-item recap-item--full">
+        <dt>Lieu</dt>
+        <dd>{{ pollution().lieu }}</dd>
+      </div>
+      <div class="recap-item">
+        <dt>Latitude</dt>
+        <dd>{{ pollution().latitude }}</dd>
+      </div>
+      <div class="recap-item">
+        <dt>Longitude</dt>
+        <dd>{{ pollution().longitude }}</dd>
+      </div>
+    </dl>
+
+    <section class="photo" aria-labelledby="recap-photo-title">
+      <h3 id="recap-photo-title">Photo</h3>
+      @if (pollution().photoUrl) {
+        <img [src]="pollution().photoUrl" [alt]="'Photo de ' + pollution().titreDeclarationDePollution">
+      } @else {
+        <p>Aucune photo n’a été fournie.</p>
+      }
+    </section>
+
+    <button class="dismiss-button" type="button" (click)="close.emit()">Fermer</button>
+</section>
