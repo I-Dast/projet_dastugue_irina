@@ -1,4 +1,5 @@
 :host {
+  /* Étapes 4/5 et géolocalisation : même palette générale que l’écran de liste (inspiration TP02). */
   box-sizing: border-box;
   display: block;
   min-height: 100vh;
@@ -227,6 +228,7 @@ button:disabled {
 }
 
 .button-danger {
+  /* Étape 5 : la couleur rouge distingue l’action destructive des actions normales. */
   background: #9b3030;
 }
 
@@ -235,6 +237,7 @@ button:disabled {
 }
 
 @media (max-width: 560px) {
+  /* Réorganise détail, champs et coordonnées pour les écrans étroits. */
   :host {
     padding: 16px;
   }
@@ -257,6 +260,7 @@ button:disabled {
 }
 
 .geolocate-button {
+  /* Action secondaire de reprise de position, identique au formulaire de création. */
   width: 100%;
   min-height: 56px;
   background: #9ca3af;

@@ -1,3 +1,4 @@
+<!-- role/aria rendent la fenêtre identifiable par les technologies d’assistance. -->
 <section
   class="dialog"
   role="dialog"
@@ -5,16 +6,19 @@
   aria-labelledby="recap-title"
   (click)="$event.stopPropagation()"
 >
+    <!-- stopPropagation empêche le clic dans la fenêtre de remonter jusqu’au fond qui la ferme. -->
     <header class="recap-header">
       <div>
         <h2 id="recap-title">Pollution déclarée</h2>
         <p>Voici le récapitulatif des informations enregistrées.</p>
       </div>
+      <!-- output close informe le parent que l’utilisateur souhaite fermer le récapitulatif. -->
       <button class="close-button" type="button" aria-label="Fermer le récapitulatif" (click)="close.emit()">
         ×
       </button>
     </header>
 
+    <!-- dl/dt/dd expriment les données sous forme de paires libellé-valeur accessibles. -->
     <dl class="recap-details">
       <div class="recap-item recap-item--full">
         <dt>Titre de la pollution</dt>
@@ -46,6 +50,7 @@
       </div>
     </dl>
 
+    <!-- @if montre la photo si une URL existe, sinon une indication explicite. -->
     <section class="photo" aria-labelledby="recap-photo-title">
       <h3 id="recap-photo-title">Photo</h3>
       @if (pollution().photoUrl) {
@@ -55,5 +60,6 @@
       }
     </section>
 
+    <!-- Deuxième moyen de fermeture, adapté aux utilisateurs qui ne cliquent pas sur la croix. -->
     <button class="dismiss-button" type="button" (click)="close.emit()">Fermer</button>
 </section>

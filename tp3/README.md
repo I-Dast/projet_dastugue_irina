@@ -2,6 +2,9 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.2.2.
 
+Pour naviguer dans le code par fonctionnalité et accéder directement aux méthodes,
+templates et tests, consultez le [guide de navigation du code](./GUIDE-CODE.md).
+
 ## Development server
 
 To start the Angular application and the mock API together, run from this
@@ -38,6 +41,33 @@ permission and the application must be served over HTTPS or localhost. The
 interface uses the TP02 green-to-lime background and slate controls.
 To start either server separately, use `npm start` for Angular and `npm run api`
 for the API.
+
+## Repères dans le code du TP
+
+- **Étape 4 — modifier** : `pollution-detail.ts` prépare et valide le formulaire ;
+  `PollutionService.update()` envoie les changements en HTTP `PUT`.
+- **Étape 5 — supprimer** : `deletePollution()` demande une confirmation avant
+  HTTP `DELETE`, puis affiche l’erreur ou revient à la liste.
+- **Étape 6 — filtrer** : les signaux de critères et `filteredPollutions` dans
+  `pollution-list.ts` calculent la liste visible ; chaque critère s’ajoute aux autres.
+- **Géolocalisation (reprise TP02)** : `GeolocationService` encapsule l’API du
+  navigateur ; `locateDevice()` copie ses coordonnées dans le formulaire.
+- **Récapitulatif (reprise TP02)** : `PollutionRecap` reçoit la pollution créée
+  par une entrée `input` et émet `close` pour demander sa fermeture.
+
+### Notions Angular utilisées
+
+- `signal()` stocke une valeur réactive ; `computed()` recalcule un résultat
+  quand les signaux qu’il lit changent.
+- `FormBuilder` construit le formulaire réactif ; `Validators` définit les
+  contraintes et `markAllAsTouched()` demande l’affichage des erreurs.
+- `inject()` demande à Angular une instance d’un service. `Observable` représente
+  une réponse HTTP asynchrone ; `subscribe()` traite ses cas `next` et `error`.
+- Dans les templates, `[propriete]` transmet une valeur à un élément,
+  `(evenement)` écoute un événement, et `@if`/`@for` gèrent les affichages
+  conditionnels et les listes.
+- `input.required<T>()` déclare une donnée entrante obligatoire pour un composant ;
+  `output<void>()` émet un événement sans donnée vers le composant parent.
 
 ## Code scaffolding
 

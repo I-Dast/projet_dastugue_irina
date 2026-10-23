@@ -13,6 +13,7 @@ describe('PollutionList', () => {
     }).compileComponents();
   });
 
+  // Vérifie le POST, la mise à jour de la liste et l’ouverture/fermeture du récapitulatif.
   it('should submit a pollution and display the backend response', async () => {
     const fixture = TestBed.createComponent(PollutionList);
     const component = fixture.componentInstance;
@@ -66,6 +67,7 @@ describe('PollutionList', () => {
     httpTestingController.verify();
   });
 
+  // Vérifie que les champs invalides affichent des erreurs et qu’aucun POST ne part.
   it('should show required-field errors when submitting an incomplete pollution', () => {
     const fixture = TestBed.createComponent(PollutionList);
     const httpTestingController = TestBed.inject(HttpTestingController);
@@ -86,6 +88,7 @@ describe('PollutionList', () => {
     httpTestingController.verify();
   });
 
+  // La géolocalisation est simulée : le test ne demande pas réellement la position de l’ordinateur.
   it('should fill in coordinates from the device location', async () => {
     const fixture = TestBed.createComponent(PollutionList);
     const geolocationService = TestBed.inject(GeolocationService);
@@ -102,6 +105,7 @@ describe('PollutionList', () => {
     locationSpy.mockRestore();
   });
 
+  // Vérifie le chargement initial et le lien construit avec l’identifiant de chaque élément.
   it('should load and render existing pollutions with a detail link', () => {
     const fixture = TestBed.createComponent(PollutionList);
     const httpTestingController = TestBed.inject(HttpTestingController);
@@ -131,6 +135,7 @@ describe('PollutionList', () => {
     httpTestingController.verify();
   });
 
+  // Étape 5 : la requête DELETE n’est envoyée qu’après confirmation.
   it('should delete a pollution after confirmation', () => {
     const fixture = TestBed.createComponent(PollutionList);
     const httpTestingController = TestBed.inject(HttpTestingController);
@@ -164,6 +169,7 @@ describe('PollutionList', () => {
     confirmSpy.mockRestore();
   });
 
+  // Étape 5 : annuler la confirmation doit conserver la pollution et éviter le DELETE.
   it('should not delete a pollution when confirmation is cancelled', () => {
     const fixture = TestBed.createComponent(PollutionList);
     const httpTestingController = TestBed.inject(HttpTestingController);
@@ -191,6 +197,7 @@ describe('PollutionList', () => {
     confirmSpy.mockRestore();
   });
 
+  // Étape 6 : critères combinés, puis retour à tous les enregistrements après réinitialisation.
   it('should combine text, type, location, and date filters and reset them', () => {
     const fixture = TestBed.createComponent(PollutionList);
     const httpTestingController = TestBed.inject(HttpTestingController);

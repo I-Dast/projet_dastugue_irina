@@ -13,14 +13,18 @@ import { PollutionService } from '../../services/pollution.service';
   templateUrl: './pollution-detail.html',
 })
 export class PollutionDetail implements OnInit {
+  // Route pour lire l’id, Router pour revenir à la liste après suppression.
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly formBuilder = inject(FormBuilder);
   private readonly geolocationService = inject(GeolocationService);
   private readonly pollutionService = inject(PollutionService);
 
+  /** Types partagés avec le formulaire de création. */
   readonly typesPollution = TYPES_POLLUTION;
+  /** Données chargées pour l’id présent dans l’URL. */
   readonly pollution = signal<Pollution | null>(null);
+  /** États affichés par le template : chargement, édition, enregistrement et suppression. */
   readonly isLoading = signal(true);
   readonly isEditing = signal(false);
   readonly isSaving = signal(false);
@@ -31,6 +35,7 @@ export class PollutionDetail implements OnInit {
   readonly locationErrorMessage = signal('');
   readonly saveErrorMessage = signal('');
   readonly saveSuccessMessage = signal('');
+  /** Formulaire prérempli lors du clic sur Modifier ; ses règles suivent celles de la création. */
   readonly editForm = this.formBuilder.nonNullable.group({
     titreDeclarationDePollution: ['', [Validators.required, Validators.minLength(3)]],
     typePollution: this.formBuilder.nonNullable.control<TypePollution | ''>('', Validators.required),
@@ -43,6 +48,7 @@ export class PollutionDetail implements OnInit {
   });
 
   ngOnInit(): void {
+    // Lit l’identifiant depuis /pollutions/:id, puis charge l’enregistrement correspondant.
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) {
       this.isLoading.set(false);
@@ -68,11 +74,13 @@ export class PollutionDetail implements OnInit {
     });
   }
 
+  /** Affiche une date API au format français. */
   formatDate(date: string): string {
     const [year, month, day] = date.split('-');
     return `${day}/${month}/${year}`;
   }
 
+  /** Étape 4 : préremplit le formulaire à partir de la pollution actuellement affichée. */
   startEditing(): void {
     const pollution = this.pollution();
     if (!pollution) {
@@ -94,11 +102,13 @@ export class PollutionDetail implements OnInit {
     this.isEditing.set(true);
   }
 
+  /** Ferme le formulaire d’édition sans envoyer de modification au serveur. */
   cancelEditing(): void {
     this.isEditing.set(false);
     this.saveErrorMessage.set('');
   }
 
+  /** Reprise TP2 : récupère la position actuelle et remplace les coordonnées du formulaire d’édition. */
   async locateDevice(): Promise<void> {
     this.isLocating.set(true);
     this.locationErrorMessage.set('');
@@ -119,6 +129,10 @@ export class PollutionDetail implements OnInit {
     }
   }
 
+  /**
+   * Étape 4 : vérifie les champs puis envoie PUT.
+   * Le détail n’est actualisé qu’avec la réponse réussie de l’API.
+   */
   saveChanges(): void {
     const pollution = this.pollution();
     if (!pollution || pollution.id === undefined) {
@@ -160,6 +174,10 @@ export class PollutionDetail implements OnInit {
     });
   }
 
+  /**
+   * Étape 5 : demande confirmation et supprime la pollution avec DELETE.
+   * Après succès, la navigation revient à la liste ; en cas d’erreur, le détail reste affiché.
+   */
   deletePollution(): void {
     const pollution = this.pollution();
     if (!pollution || pollution.id === undefined) {

@@ -1,6 +1,9 @@
 <main class="page">
+  <!-- routerLink revient à la liste sans coder manuellement une navigation dans le template. -->
   <a class="back-link" routerLink="/">← Retour à la liste</a>
 
+  <!-- Les branches Angular affichent soit le chargement, soit l’erreur, soit la donnée reçue.
+       L’alias item ci-dessous expose les données chargées sans relire le signal. -->
   @if (isLoading()) {
     <p class="message" role="status">Chargement du détail…</p>
   } @else if (errorMessage()) {
@@ -15,6 +18,7 @@
         <span class="badge">{{ item.typePollution }}</span>
       </header>
 
+      <!-- Étapes 4 et 5 : actions disponibles hors du formulaire d’édition. -->
       @if (!isEditing()) {
         <div class="detail-actions">
           @if (item.id !== undefined) {
@@ -37,6 +41,7 @@
         </div>
       }
 
+      <!-- Étape 4 : formGroup lie les contrôles modifiables aux valeurs préremplies du composant. -->
       @if (isEditing()) {
         <form class="edit-form" [formGroup]="editForm" (ngSubmit)="saveChanges()">
           <div class="field">
@@ -91,6 +96,7 @@
             </div>
           </div>
 
+          <!-- Les coordonnées peuvent être éditées ou remplacées par la position du navigateur. -->
           <fieldset>
             <legend>Coordonnées</legend>
             <div class="field-row">
@@ -105,6 +111,7 @@
             </div>
           </fieldset>
 
+          <!-- Reprise TP2 : recalcule les coordonnées depuis la position actuelle de l’appareil. -->
           <button
             class="geolocate-button"
             type="button"
@@ -136,6 +143,7 @@
           </div>
         </form>
       } @else {
+      <!-- En dehors du mode édition, présentation en lecture seule des données. -->
       <dl class="detail-grid">
         <div class="detail-item detail-item--full">
           <dt>Description</dt>
@@ -162,6 +170,7 @@
       @if (item.photoUrl) {
         <section class="photo-section" aria-labelledby="photo-title">
           <h2 id="photo-title">Photo</h2>
+          <!-- Les crochets signifient que src et alt reçoivent des valeurs Angular dynamiques. -->
           <img [src]="item.photoUrl" [alt]="'Photo de ' + item.titreDeclarationDePollution">
         </section>
       }

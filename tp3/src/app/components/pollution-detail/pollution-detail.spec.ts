@@ -22,6 +22,7 @@ describe('PollutionDetail', () => {
     }).compileComponents();
   });
 
+  // Vérifie le GET par identifiant et l’affichage des données du détail.
   it('should load and display the selected pollution', () => {
     const fixture = TestBed.createComponent(PollutionDetail);
     const httpTestingController = TestBed.inject(HttpTestingController);
@@ -49,6 +50,7 @@ describe('PollutionDetail', () => {
     httpTestingController.verify();
   });
 
+  // Vérifie le traitement de la réponse HTTP 404.
   it('should show a not-found message when the pollution does not exist', () => {
     const fixture = TestBed.createComponent(PollutionDetail);
     const httpTestingController = TestBed.inject(HttpTestingController);
@@ -63,6 +65,7 @@ describe('PollutionDetail', () => {
     httpTestingController.verify();
   });
 
+  // Étape 4 : vérifie que l’édition envoie les nouveaux champs en PUT et les réaffiche.
   it('should update the selected pollution and display the saved values', () => {
     const fixture = TestBed.createComponent(PollutionDetail);
     const httpTestingController = TestBed.inject(HttpTestingController);
@@ -109,6 +112,7 @@ describe('PollutionDetail', () => {
     httpTestingController.verify();
   });
 
+  // Étape 5 : après confirmation, DELETE réussit et le routeur revient à la liste.
   it('should delete the selected pollution and return to the list after confirmation', () => {
     const fixture = TestBed.createComponent(PollutionDetail);
     const httpTestingController = TestBed.inject(HttpTestingController);
@@ -145,6 +149,7 @@ describe('PollutionDetail', () => {
     navigateSpy.mockRestore();
   });
 
+  // Reprise TP2 : valide le remplissage GPS du formulaire d’édition avec un service simulé.
   it('should fill in edit coordinates from the device location', async () => {
     const fixture = TestBed.createComponent(PollutionDetail);
     const httpTestingController = TestBed.inject(HttpTestingController);
