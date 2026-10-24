@@ -1,0 +1,48 @@
+{
+  "pollutions": [
+    {
+      "titreDeclarationDePollution": "sdksdjfkdjfhksdjflsk",
+      "typePollution": "Plastique",
+      "description": "seifhdjhgsldfkosl",
+      "dateObservation": "2026-10-22",
+      "lieu": "test",
+      "latitude": 60,
+      "longitude": 60,
+      "photoUrl": "",
+      "id": 3
+    },
+    {
+      "titreDeclarationDePollution": "Du plastique de partout !",
+      "typePollution": "Plastique",
+      "description": "Le plastique c'est fantastique\nLe caoutchouc c'est super doux\nLe latex c'est une question de réflexe ",
+      "dateObservation": "2026-10-22",
+      "lieu": "Plastique Land",
+      "latitude": 48.5902255,
+      "longitude": 7.68447,
+      "photoUrl": "",
+      "id": 4
+    },
+    {
+      "titreDeclarationDePollution": "testtgfsdc",
+      "typePollution": "Chimique",
+      "description": "dsoiouyydgtyoqpsoiqlzukyjdshgf",
+      "dateObservation": "2026-10-22",
+      "lieu": "tes",
+      "latitude": 48.5902255,
+      "longitude": 7.68447,
+      "photoUrl": "",
+      "id": 5
+    },
+    {
+      "titreDeclarationDePollution": "test",
+      "typePollution": "Dépôt sauvage",
+      "description": "test enregistrer une pollution dépôt sauvage.",
+      "dateObservation": "2026-10-22",
+      "lieu": "Test",
+      "latitude": 48.5902255,
+      "longitude": 7.68447,
+      "photoUrl": "",
+      "id": 6
+    }
+  ]
+}
