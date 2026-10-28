@@ -108,7 +108,7 @@ l’API avant le déploiement.
 
 | Sujet | Code à ouvrir | Ce qu’on y trouve |
 |---|---|---|
-| Toutes les opérations API | [PollutionService](./src/app/services/pollution.service.ts#L8) | `list`, `getById`, `create`, `update` et `delete`. |
+| Toutes les opérations API et leurs erreurs | [PollutionService](./src/app/services/pollution.service.ts#L8) | `list`, `getById`, `create`, `update` et `delete`, avec centralisation des erreurs via `catchError`. |
 | Modèle d’une pollution | [Pollution](./src/app/models/pollution.ts#L15) | Champs partagés par les composants et l’API. |
 | Types disponibles | [TYPES_POLLUTION](./src/app/models/pollution.ts#L1) | Catégories de pollution et type TypeScript associé. |
 | Construction des URL HTTP | [PollutionService](./src/app/services/pollution.service.ts#L8) | Construit l’endpoint à partir de `environment.apiBaseUrl`. |
@@ -149,6 +149,7 @@ l’API avant le déploiement.
 - [Tests de la liste](./src/app/components/pollution-list/pollution-list.spec.ts#L1)
 - [Tests du détail](./src/app/components/pollution-detail/pollution-detail.spec.ts#L1)
 - [Tests du backend simulé](./src/app/interceptors/mock-backend.interceptor.spec.ts#L1)
+- [Tests des erreurs API](./src/app/services/pollution.service.spec.ts#L1)
 
 Depuis le dossier `tp3`, lancez `npm test -- --watch=false` pour exécuter les tests
 et `npm run build` pour compiler l’application.

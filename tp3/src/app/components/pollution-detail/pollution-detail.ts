@@ -1,4 +1,3 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -63,13 +62,7 @@ export class PollutionDetail implements OnInit {
       },
       error: (error: unknown) => {
         this.isLoading.set(false);
-        this.errorMessage.set(
-          error instanceof HttpErrorResponse && error.status === 404
-            ? 'Cette pollution n’existe pas.'
-            : error instanceof HttpErrorResponse
-              ? `Impossible de charger le détail (erreur HTTP ${error.status}).`
-              : 'Une erreur est survenue lors du chargement du détail.',
-        );
+        this.errorMessage.set(this.pollutionService.getErrorMessage(error));
       },
     });
   }
@@ -165,11 +158,7 @@ export class PollutionDetail implements OnInit {
       },
       error: (error: unknown) => {
         this.isSaving.set(false);
-        this.saveErrorMessage.set(
-          error instanceof HttpErrorResponse
-            ? `Impossible de modifier la pollution (erreur HTTP ${error.status}).`
-            : 'Une erreur est survenue lors de la modification de la pollution.',
-        );
+        this.saveErrorMessage.set(this.pollutionService.getErrorMessage(error));
       },
     });
   }
@@ -203,11 +192,7 @@ export class PollutionDetail implements OnInit {
       },
       error: (error: unknown) => {
         this.isDeleting.set(false);
-        this.deleteErrorMessage.set(
-          error instanceof HttpErrorResponse
-            ? `Impossible de supprimer la pollution (erreur HTTP ${error.status}).`
-            : 'Une erreur est survenue lors de la suppression de la pollution.',
-        );
+        this.deleteErrorMessage.set(this.pollutionService.getErrorMessage(error));
       },
     });
   }
