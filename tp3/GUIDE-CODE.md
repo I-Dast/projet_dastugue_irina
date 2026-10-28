@@ -7,13 +7,14 @@ affiche directement la ligne correspondante.
 
 ## Vue d’ensemble du parcours
 
-1. La page d’accueil affiche le formulaire et charge la liste depuis l’API.
+1. La page d’accueil affiche le formulaire et charge la liste via `PollutionService`.
 2. La création envoie une requête `POST`, met à jour la liste et affiche un récapitulatif.
 3. La liste permet de filtrer, ouvrir un détail et supprimer une pollution.
 4. Le détail permet de modifier une pollution avec `PUT` ou de la supprimer avec `DELETE`.
 
 Les composants s’occupent de l’écran et de ses interactions. Les services
-encapsulent les communications avec l’API et les fonctionnalités du navigateur.
+encapsulent les communications HTTP et les fonctionnalités du navigateur. En
+développement, un intercepteur peut répondre à ces appels avec un backend simulé.
 
 ## Page principale et déclaration
 
@@ -26,6 +27,28 @@ encapsulent les communications avec l’API et les fonctionnalités du navigateu
 | Formulaire HTML | [pollution-list.html — déclaration](./src/app/components/pollution-list/pollution-list.html#L9) | `formGroup`, `formControlName`, soumission, erreurs et bouton d’envoi. |
 | Bouton de géolocalisation | [pollution-list.html — Utiliser ma position](./src/app/components/pollution-list/pollution-list.html#L103) | Événement `(click)` relié à `locateDevice()`. |
 | Style de la page | [pollution-list.css](./src/app/components/pollution-list/pollution-list.css#L1) | Mise en page, charte graphique et adaptation mobile. |
+
+## Backend simulé et configuration HTTP
+
+| Sujet | Code à ouvrir | Ce qu’on y trouve |
+|---|---|---|
+| Choix du backend | [configuration HttpClient](./src/app/app.config.ts#L8) | Enregistre l’intercepteur seulement lorsque `environment.useMock` vaut `true`. |
+| Intercepteur du backend simulé | [mockBackendInterceptor](./src/app/interceptors/mock-backend.interceptor.ts#L14) | Intercepte les routes pollution et simule `GET`, `POST`, `PUT` et `DELETE`. |
+| Stockage et validation des données | [lecture et écriture du stockage local](./src/app/interceptors/mock-backend.interceptor.ts#L128) | Persiste les déclarations dans `localStorage`, valide les données et signale les erreurs HTTP. |
+| Mode développement | [environment.ts](./src/environments/environment.ts#L3) | `useMock: true` active le backend simulé. |
+| Mode production | [environment.prod.ts](./src/environments/environment.prod.ts#L1) | `useMock: false` laisse passer les appels vers l’URL configurée. |
+| Tests du backend simulé | [mock-backend.interceptor.spec.ts](./src/app/interceptors/mock-backend.interceptor.spec.ts#L1) | Vérifie les opérations CRUD et la réponse 404 pour un identifiant inconnu. |
+
+Par défaut, le backend simulé démarre avec une liste vide. Les créations,
+modifications et suppressions sont conservées dans le stockage local du
+navigateur, sous la clé `tp3.mock-backend.pollutions.v1`. Pour repartir d’une
+liste vide, supprimer cette clé dans les outils de développement du navigateur.
+
+Pour tester JSON Server à la place, démarrer `npm run api`, régler
+`useMock: false` dans `src/environments/environment.ts`, puis lancer
+`npm start`. La configuration de production désactive également l’intercepteur ;
+remplacer alors `apiBaseUrl` dans `environment.prod.ts` par l’adresse réelle de
+l’API avant le déploiement.
 
 ## Étape 4 — modifier une pollution
 
@@ -88,9 +111,18 @@ encapsulent les communications avec l’API et les fonctionnalités du navigateu
 | Toutes les opérations API | [PollutionService](./src/app/services/pollution.service.ts#L8) | `list`, `getById`, `create`, `update` et `delete`. |
 | Modèle d’une pollution | [Pollution](./src/app/models/pollution.ts#L15) | Champs partagés par les composants et l’API. |
 | Types disponibles | [TYPES_POLLUTION](./src/app/models/pollution.ts#L1) | Catégories de pollution et type TypeScript associé. |
-| URL de l’API locale | [environment.ts](./src/environments/environment.ts#L1) | Valeur de `apiBaseUrl` utilisée en développement. |
+| Construction des URL HTTP | [PollutionService](./src/app/services/pollution.service.ts#L8) | Construit l’endpoint à partir de `environment.apiBaseUrl`. |
 | Routage | [app.routes.ts](./src/app/app.routes.ts#L5) | Associe l’accueil et `/pollutions/:id` à leurs composants. |
-| Configuration Angular | [app.config.ts](./src/app/app.config.ts#L5) | Active le client HTTP et le routeur. |
+| Configuration Angular | [app.config.ts](./src/app/app.config.ts#L8) | Configure le client HTTP, l’intercepteur optionnel et le routeur. |
+
+## Apparence et fond interactif
+
+| Sujet | Code à ouvrir | Ce qu’on y trouve |
+|---|---|---|
+| Shell de l’application | [app.html](./src/app/app.html#L1) | Entoure les routes et transmet les mouvements et départs du pointeur. |
+| Suivi du pointeur | [App.updateBackgroundPointer](./src/app/app.ts#L9) | Met à jour la position du halo et le masque la sortie du pointeur. |
+| Police et fond | [styles.css](./src/styles.css#L1) | Charge Azimut et superpose l’image de fond avec transparence et halo au survol. |
+| Image de fond | [page-background.png](./public/page-background.png) | Image décorative publiée avec les ressources statiques. |
 
 ## Lire les types et paramètres courants
 
@@ -116,6 +148,7 @@ encapsulent les communications avec l’API et les fonctionnalités du navigateu
 
 - [Tests de la liste](./src/app/components/pollution-list/pollution-list.spec.ts#L1)
 - [Tests du détail](./src/app/components/pollution-detail/pollution-detail.spec.ts#L1)
+- [Tests du backend simulé](./src/app/interceptors/mock-backend.interceptor.spec.ts#L1)
 
 Depuis le dossier `tp3`, lancez `npm test -- --watch=false` pour exécuter les tests
 et `npm run build` pour compiler l’application.

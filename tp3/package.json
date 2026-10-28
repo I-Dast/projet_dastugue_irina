@@ -5,7 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "api": "json-server --watch db.json --routes routes.json --port 53903",
-    "dev": "concurrently -k \"npm:start\" \"npm:api\"",
+    "dev": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"

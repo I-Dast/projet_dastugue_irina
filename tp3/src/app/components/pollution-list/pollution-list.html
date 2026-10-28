@@ -1,13 +1,13 @@
 <main class="page">
   <!-- En-tête de la page de déclaration (formulaire initial du TP3). -->
   <header class="page-header">
-    <p class="eyebrow">TP03 · Gestion des pollutions</p>
+    <p class="eyebrow">Gestion des pollutions</p>
     <h1>Déclarer une pollution</h1>
     <p>Renseignez les informations de l’observation pour l’ajouter à la liste.</p>
   </header>
 
   <!-- Formulaire réactif : formGroup relie les champs au modèle TypeScript et ngSubmit lance l’ajout. -->
-  <section class="panel" aria-labelledby="form-title">
+  <section class="panel declaration-panel" aria-labelledby="form-title">
     <h2 id="form-title">Nouvelle pollution</h2>
 
     <form [formGroup]="pollutionForm" (ngSubmit)="addPollution()">
@@ -130,6 +130,12 @@
         {{ isSaving() ? 'Ajout en cours…' : 'Ajouter la pollution' }}
       </button>
     </form>
+    <small class="font-credit">
+      Typographie Azimut, créée par Benjamin Blaess, Julien Priez et Mathieu Réguer —
+      <a href="https://creativecommons.org/licenses/by-nd/4.0/deed.fr" target="_blank" rel="noopener noreferrer">
+        licence CC BY-ND 4.0
+      </a>.
+    </small>
   </section>
 
   <!-- Étape 6 : filtre et liste des enregistrements chargés depuis l’API. -->

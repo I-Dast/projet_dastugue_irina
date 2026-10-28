@@ -52,6 +52,45 @@ h1 {
   box-shadow: 0 8px 24px rgb(24 32 51 / 8%);
 }
 
+.declaration-panel {
+  border-color: #b7c8a9;
+  background: linear-gradient(145deg, #fff 0%, #fbfcf6 100%);
+}
+
+.declaration-panel h2 {
+  color: #35523b;
+  font-size: clamp(1.4rem, 4vw, 1.7rem);
+}
+
+.declaration-panel input:focus,
+.declaration-panel select:focus,
+.declaration-panel textarea:focus {
+  border-color: #547b58;
+  box-shadow: 0 0 0 3px rgb(84 123 88 / 18%);
+}
+
+.declaration-panel > form > button[type='submit'] {
+  background: #466b4a;
+}
+
+.declaration-panel > form > button[type='submit']:hover:not(:disabled) {
+  background: #35523b;
+}
+
+.font-credit {
+  display: block;
+  margin-top: 1.5rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid #e1e6d9;
+  color: #6b7280;
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+.font-credit a {
+  color: #466b4a;
+}
+
 .panel h2 {
   margin-bottom: 1.25rem;
   font-size: 1.25rem;
@@ -300,4 +339,8 @@ button:disabled {
 
 .geolocate-button:hover:not(:disabled) {
   background: #858d9a;
+}
+
+:host * {
+  font-weight: 400;
 }

@@ -1,1 +1,7 @@
-<router-outlet />
+<div
+  class="app-shell"
+  (pointermove)="updateBackgroundPointer($event)"
+  (pointerleave)="resetBackgroundPointer($event)"
+>
+  <router-outlet />
+</div>

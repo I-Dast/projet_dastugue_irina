@@ -50,7 +50,6 @@ button {
   color: #fff;
   background: #4b5563;
   font: inherit;
-  font-weight: 700;
   cursor: pointer;
 }
 
@@ -93,7 +92,6 @@ button:hover {
   margin-bottom: 0.4rem;
   color: #6b7280;
   font-size: 0.9rem;
-  font-weight: 650;
 }
 
 .recap-item dd {
@@ -101,12 +99,10 @@ button:hover {
   overflow-wrap: anywhere;
   font-size: 1rem;
   line-height: 1.45;
-  font-weight: 600;
 }
 
 .recap-item .description {
   white-space: pre-wrap;
-  font-weight: 400;
 }
 
 .photo {
@@ -140,4 +136,9 @@ button:hover {
   .recap-item--full {
     grid-column: auto;
   }
+}
+
+.dialog,
+.dialog * {
+  font-weight: 400;
 }

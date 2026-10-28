@@ -269,3 +269,7 @@ button:disabled {
 .geolocate-button:hover:not(:disabled) {
   background: #858d9a;
 }
+
+:host * {
+  font-weight: 400;
+}

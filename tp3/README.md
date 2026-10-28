@@ -7,26 +7,28 @@ templates et tests, consultez le [guide de navigation du code](./GUIDE-CODE.md).
 
 ## Development server
 
-To start the Angular application and the mock API together, run from this
-directory:
+To start the Angular application with its mock backend, run from this directory:
 
 ```bash
 npm run dev
 ```
 
-The Angular application is available at `http://localhost:4200/` and the API at
-`http://localhost:53903`. Stop both servers with `Ctrl+C`.
+The Angular application is available at `http://localhost:4200/`. Stop it with
+`Ctrl+C`. By default, development requests are handled by an Angular HTTP
+interceptor and saved in the browser's local storage.
 
 ## Mock API
 
-The project uses JSON Server as a local REST API. Start it from this directory in a
-second terminal:
+JSON Server is also available as an alternative local REST API. Start it from
+this directory:
 
 ```bash
 npm run api
 ```
 
-The API is available at `http://localhost:53903`. The routes `GET /tp3/pollution`,
+The API is available at `http://localhost:53903`. To use it instead of the
+interceptor, set `useMock: false` in `src/environments/environment.ts`. The
+routes `GET /tp3/pollution`,
 `POST /tp3/pollution`, `GET /tp3/pollution/:id`, `PUT /tp3/pollution/:id` and
 `DELETE /tp3/pollution/:id` are rewritten to the `pollutions` collection stored
 in `db.json`; submitted entries remain in that file. From the list, use
@@ -35,12 +37,18 @@ in `db.json`; submitted entries remain in that file. From the list, use
 it after confirming the action. The list also provides a **Supprimer** button.
 Filter the list by keyword, pollution type, location, or observation date range;
 criteria can be combined and reset at any time.
-The declaration and edit forms can fill in latitude and longitude using the
+With the default `useMock: true`, pollution data is stored in browser local
+storage and remains available after reloading the application. The declaration
+and edit forms can fill in latitude and longitude using the
 browser's **Utiliser ma position** button; the browser must grant location
 permission and the application must be served over HTTPS or localhost. The
 interface uses the TP02 green-to-lime background and slate controls.
-To start either server separately, use `npm start` for Angular and `npm run api`
-for the API.
+The Azimut typeface is loaded from the official Strasbourg website; the
+declaration form credits its creators and links to the CC BY-ND 4.0 license.
+A decorative page background uses the supplied image with subtle opacity and a
+pointer-following clear spot on mouse-capable devices.
+To start Angular without the mock interceptor, set `useMock: false` and run
+`npm start`; start JSON Server separately with `npm run api`.
 
 ## Repères dans le code du TP
 
