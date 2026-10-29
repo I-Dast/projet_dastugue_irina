@@ -1,0 +1,115 @@
+<main class="page">
+  <section class="signup-card" aria-labelledby="signup-title">
+    <p class="eyebrow">Bienvenue</p>
+    <h1 id="signup-title">Créer un compte</h1>
+    <p class="intro">Renseignez vos informations pour créer votre compte.</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="field">
+        <label for="login">Identifiant</label>
+        <input id="login" type="text" formControlName="login" autocomplete="username"
+          [attr.aria-invalid]="form.controls.login.invalid && form.controls.login.touched"
+          aria-describedby="login-error">
+        @if (form.controls.login.touched && form.controls.login.invalid) {
+          <p class="field-error" id="login-error">Saisissez un identifiant valide d’au moins 3 caractères (lettres, chiffres, point, tiret ou souligné).</p>
+        }
+      </div>
+
+      <div class="field">
+        <label for="nom">Nom</label>
+        <input id="nom" type="text" formControlName="nom" autocomplete="family-name"
+          [attr.aria-invalid]="form.controls.nom.invalid && form.controls.nom.touched"
+          aria-describedby="nom-error">
+        @if (form.controls.nom.touched && form.controls.nom.invalid) {
+          <p class="field-error" id="nom-error">Le nom est obligatoire et doit contenir au moins 2 lettres.</p>
+        }
+      </div>
+
+      <div class="field">
+        <label for="prenom">Prénom</label>
+        <input id="prenom" type="text" formControlName="prenom" autocomplete="given-name"
+          [attr.aria-invalid]="form.controls.prenom.invalid && form.controls.prenom.touched"
+          aria-describedby="prenom-error">
+        @if (form.controls.prenom.touched && form.controls.prenom.invalid) {
+          <p class="field-error" id="prenom-error">Le prénom est obligatoire et doit contenir au moins 2 lettres.</p>
+        }
+      </div>
+
+      <div class="field full-width">
+        <label for="adresse">Adresse</label>
+        <input id="adresse" type="text" formControlName="adresse" autocomplete="street-address"
+          [attr.aria-invalid]="form.controls.adresse.invalid && form.controls.adresse.touched"
+          aria-describedby="adresse-error">
+        @if (form.controls.adresse.touched && form.controls.adresse.hasError('required')) {
+          <p class="field-error" id="adresse-error">L’adresse est obligatoire.</p>
+        }
+      </div>
+
+      <div class="field">
+        <label for="email">Adresse e-mail</label>
+        <input id="email" type="email" formControlName="email" autocomplete="email"
+          [attr.aria-invalid]="form.controls.email.invalid && form.controls.email.touched"
+          aria-describedby="email-error">
+        @if (form.controls.email.touched && form.controls.email.invalid) {
+          <p class="field-error" id="email-error">Saisissez une adresse e-mail valide.</p>
+        }
+      </div>
+
+      <div class="field">
+        <label for="telephone">Téléphone</label>
+        <input id="telephone" type="tel" formControlName="telephone" autocomplete="tel"
+          [attr.aria-invalid]="form.controls.telephone.invalid && form.controls.telephone.touched"
+          aria-describedby="telephone-error">
+        @if (form.controls.telephone.touched && form.controls.telephone.invalid) {
+          <p class="field-error" id="telephone-error">Saisissez un numéro de téléphone valide.</p>
+        }
+      </div>
+
+      <div class="field full-width">
+        <label for="dateNaissance">Date de naissance</label>
+        <input id="dateNaissance" type="date" formControlName="dateNaissance" autocomplete="bday"
+          [max]="today"
+          [attr.aria-invalid]="form.controls.dateNaissance.invalid && form.controls.dateNaissance.touched"
+          aria-describedby="dateNaissance-error">
+        @if (form.controls.dateNaissance.touched && form.controls.dateNaissance.hasError('required')) {
+          <p class="field-error" id="dateNaissance-error">La date de naissance est obligatoire.</p>
+        } @else if (form.controls.dateNaissance.touched && form.controls.dateNaissance.hasError('futureDate')) {
+          <p class="field-error" id="dateNaissance-error">La date de naissance ne peut pas être dans le futur.</p>
+        }
+      </div>
+
+      <div class="field">
+        <label for="password">Mot de passe</label>
+        <input id="password" type="password" formControlName="password" autocomplete="new-password"
+          [attr.aria-invalid]="form.controls.password.invalid && form.controls.password.touched"
+          aria-describedby="password-error">
+        @if (form.controls.password.touched && form.controls.password.invalid) {
+          <p class="field-error" id="password-error">Choisissez un mot de passe d’au moins 8 caractères.</p>
+        }
+      </div>
+
+      <div class="field">
+        <label for="confirmPassword">Confirmation du mot de passe</label>
+        <input id="confirmPassword" type="password" formControlName="confirmPassword" autocomplete="new-password"
+          [attr.aria-invalid]="(form.controls.confirmPassword.invalid || form.hasError('passwordMismatch')) && form.controls.confirmPassword.touched"
+          aria-describedby="confirmPassword-error">
+        @if (form.controls.confirmPassword.touched && form.controls.confirmPassword.hasError('required')) {
+          <p class="field-error" id="confirmPassword-error">Confirmez votre mot de passe.</p>
+        } @else if (form.controls.confirmPassword.touched && form.hasError('passwordMismatch')) {
+          <p class="field-error" id="confirmPassword-error">Les mots de passe ne correspondent pas.</p>
+        }
+      </div>
+
+      <button type="submit" [disabled]="form.invalid || isSubmitting">
+        {{ isSubmitting ? 'Inscription en cours…' : 'Créer mon compte' }}
+      </button>
+
+      @if (successMessage) {
+        <p class="feedback success" role="status">{{ successMessage }}</p>
+      }
+      @if (errorMessage) {
+        <p class="feedback error" role="alert">{{ errorMessage }}</p>
+      }
+    </form>
+  </section>
+</main>
