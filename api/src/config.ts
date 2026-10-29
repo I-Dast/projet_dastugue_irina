@@ -1,22 +1,30 @@
 export interface DatabaseConfig {
   host: string;
-  port: string;
+  port: number;
   user: string;
   password: string;
-  bdname: string;
+  database: string;
+  url?: string;
+  ssl: boolean;
 }
 
 export interface AppConfig {
   BDD: DatabaseConfig;
 }
 
+const databaseUrl = process.env.DATABASE_URL;
+const host = databaseUrl
+  ? new URL(databaseUrl).hostname
+  : process.env.DB_HOST || "localhost";
+const isLocalHost = host === "localhost" || host === "127.0.0.1";
+
 export const config: AppConfig = {
   BDD: {
-    host: process.env.DB_HOST || "dpg-d1hnd1bipnbc73faldmg-a.oregon-postgres.render.com",
+    host: process.env.DB_HOST || "dpg-dbhmiqutlv9c7395tk70-a",
     port: process.env.DB_PORT || "5432",
-    user: process.env.DB_USER || "cnam_db_6xuy_user",
-    password: process.env.DB_PASSWORD || "fGkskYzc8Vwqho8X9bTXcnGq42q3X9bE",
-    bdname: process.env.DB_NAME || "cnam_db_6xuy"
+    user: process.env.DB_USER || "pollution_user",
+    password: process.env.DB_PASSWORD || "jBJbqzABIL35qQCDmcI9MKTANOLlqxAG",
+    bdname: process.env.DB_NAME || "pollution_db_68bs"
   }
 };
 
