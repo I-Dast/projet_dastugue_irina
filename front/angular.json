@@ -6,7 +6,11 @@
   },
   "newProjectRoot": "projects",
   "projects": {
+<<<<<<< HEAD
     "front": {
+=======
+    "tp3": {
+>>>>>>> 1e85533251dc9f86d7a4706aefe60ae74d3fb02e
       "projectType": "application",
       "root": "",
       "sourceRoot": "src",
@@ -23,10 +27,18 @@
                 "input": "public"
               }
             ],
-            "styles": ["src/styles.css"]
+            "styles": [
+              "src/styles.css"
+            ]
           },
           "configurations": {
             "production": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
               "budgets": [
                 {
                   "type": "initial",
@@ -44,13 +56,7 @@
             "development": {
               "optimization": false,
               "extractLicenses": false,
-              "sourceMap": true,
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.development.ts"
-                }
-              ]
+              "sourceMap": true
             }
           },
           "defaultConfiguration": "production"
@@ -59,10 +65,17 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
+<<<<<<< HEAD
               "buildTarget": "front:build:production"
             },
             "development": {
               "buildTarget": "front:build:development"
+=======
+              "buildTarget": "tp3:build:production"
+            },
+            "development": {
+              "buildTarget": "tp3:build:development"
+>>>>>>> 1e85533251dc9f86d7a4706aefe60ae74d3fb02e
             }
           },
           "defaultConfiguration": "development"

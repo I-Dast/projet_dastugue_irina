@@ -1,11 +1,20 @@
 {
+<<<<<<< HEAD
   "name": "front",
+=======
+  "name": "tp3",
+>>>>>>> 1e85533251dc9f86d7a4706aefe60ae74d3fb02e
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+<<<<<<< HEAD
     "start:api": "json-server --watch db.json --port 3000",
     "start:all": "concurrently -k \"npm: start:api\" \"npm: start\"",
+=======
+    "api": "json-server --watch db.json --routes routes.json --port 53903",
+    "dev": "ng serve",
+>>>>>>> 1e85533251dc9f86d7a4706aefe60ae74d3fb02e
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
@@ -26,9 +35,13 @@
     "@angular/build": "^22.2.2",
     "@angular/cli": "^22.2.2",
     "@angular/compiler-cli": "^22.2.0",
+<<<<<<< HEAD
     "concurrently": "^10.0.0",
+=======
+    "concurrently": "^10.0.6",
+>>>>>>> 1e85533251dc9f86d7a4706aefe60ae74d3fb02e
     "jsdom": "^30.0.0",
-    "json-server": "^1.0.0-beta.15",
+    "json-server": "^0.17.4",
     "prettier": "^3.8.1",
     "typescript": "~6.0.2",
     "vitest": "^5.0.0"

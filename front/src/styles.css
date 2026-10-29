@@ -1,3 +1,17 @@
+<<<<<<< HEAD
+=======
+@import url('https://azimut.strasbourg.eu/styles/fonts.css');
+
+:root {
+  /* Palette globale du TP02, appliquée derrière les pages du TP3. */
+  color-scheme: light;
+  font-family: 'Azimut', Arial, sans-serif;
+  font-weight: 400;
+  color: #182033;
+  background: #e3efc6;
+}
+
+>>>>>>> 1e85533251dc9f86d7a4706aefe60ae74d3fb02e
 html,
 body {
   min-height: 100%;
@@ -5,7 +19,62 @@ body {
 }
 
 body {
+<<<<<<< HEAD
   background: linear-gradient(145deg, #d8ef68 5%, #9ed432 48%, #62aa31 100%);
   color: #20321b;
   font-family: Arial, Helvetica, sans-serif;
+=======
+  background: linear-gradient(160deg, #f0f4c8 0%, #e3efc6 48%, #c8e1b8 100%);
+}
+
+.app-shell {
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+  --pointer-x: -1000px;
+  --pointer-y: -1000px;
+}
+
+.app-shell::before,
+.app-shell::after {
+  position: fixed;
+  z-index: -1;
+  inset: 0;
+  content: '';
+  pointer-events: none;
+  background: url('/page-background.png') center / cover no-repeat;
+}
+
+.app-shell::before {
+  opacity: 0.16;
+}
+
+.app-shell::after {
+  display: none;
+  opacity: 0.68;
+  -webkit-mask-image: radial-gradient(
+    circle 190px at var(--pointer-x) var(--pointer-y),
+    #000 0%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    circle 190px at var(--pointer-x) var(--pointer-y),
+    #000 0%,
+    transparent 100%
+  );
+}
+
+@supports (mask-image: radial-gradient(circle, #000, transparent)) {
+  @media (hover: hover) and (pointer: fine) {
+    .app-shell::after {
+      display: block;
+    }
+  }
+}
+
+@media (hover: none) {
+  .app-shell::before {
+    opacity: 0.2;
+  }
+>>>>>>> 1e85533251dc9f86d7a4706aefe60ae74d3fb02e
 }

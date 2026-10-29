@@ -1,3 +1,53 @@
 {
+<<<<<<< HEAD
   "users": []
 }
+=======
+  "pollutions": [
+    {
+      "titreDeclarationDePollution": "Du plastique de partout !",
+      "typePollution": "Plastique",
+      "description": "Le plastique c'est fantastique\nLe caoutchouc c'est super doux\nLe latex c'est une question de réflexe ",
+      "dateObservation": "2026-10-22",
+      "lieu": "Plastique Land",
+      "latitude": 48.5902255,
+      "longitude": 7.68447,
+      "photoUrl": "",
+      "id": 4
+    },
+    {
+      "titreDeclarationDePollution": "test",
+      "typePollution": "Dépôt sauvage",
+      "description": "test enregistrer une pollution dépôt sauvage.",
+      "dateObservation": "2026-10-22",
+      "lieu": "Test",
+      "latitude": 48.5902255,
+      "longitude": 7.68447,
+      "photoUrl": "",
+      "id": 6
+    },
+    {
+      "titreDeclarationDePollution": "test",
+      "typePollution": "Chimique",
+      "description": "test ajout description d'une pollution chimique",
+      "dateObservation": "2026-10-22",
+      "lieu": "tets",
+      "latitude": 48.5902255,
+      "longitude": 7.68447,
+      "photoUrl": "",
+      "id": 7
+    },
+    {
+      "titreDeclarationDePollution": "test",
+      "typePollution": "Plastique",
+      "description": "test d'ajout d'une pollution",
+      "dateObservation": "2026-10-28",
+      "lieu": "ici",
+      "latitude": 48.8568,
+      "longitude": 2.3508,
+      "photoUrl": "",
+      "id": 8
+    }
+  ]
+}
+>>>>>>> 1e85533251dc9f86d7a4706aefe60ae74d3fb02e
