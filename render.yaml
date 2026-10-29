@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: tp3-frontend
+    runtime: static
+    rootDir: front
+    buildCommand: >-
+      npm ci --include=dev &&
+      node -e "const fs=require('node:fs');const file='src/environments/environment.prod.ts';const url=process.env.API_BASE_URL;if(!url)throw new Error('API_BASE_URL is required');const source=fs.readFileSync(file,'utf8');fs.writeFileSync(file,source.replace('https://url-reelle-de-ton-api.com',url));" &&
+      npm run build
+    staticPublishPath: dist/tp3/browser
+    envVars:
+      - key: API_BASE_URL
+        fromService:
+          type: web
+          name: tp3-api
+          envVarKey: RENDER_EXTERNAL_URL
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+  - type: web
+    name: tp3-api
+    runtime: node
+    rootDir: front
+    buildCommand: npm ci --include=dev
+    startCommand: npx json-server --watch db.json --routes routes.json --host 0.0.0.0 --port $PORT

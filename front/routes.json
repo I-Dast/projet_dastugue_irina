@@ -1,0 +1,4 @@
+{
+  "/tp3/pollution": "/pollutions",
+  "/tp3/pollution/:id": "/pollutions/:id"
+}

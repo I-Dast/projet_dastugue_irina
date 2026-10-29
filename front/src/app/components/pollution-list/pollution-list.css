@@ -1,0 +1,346 @@
+:host {
+  /* Cadre commun et palette vert anis/ardoise reprise de TP02. */
+  box-sizing: border-box;
+  display: block;
+  min-height: 100vh;
+  padding: clamp(16px, 4vw, 40px);
+  color: #182033;
+}
+
+.page {
+  width: min(100%, 900px);
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: 1.5rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.5rem;
+  color: #4b5563;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  margin-bottom: 0.5rem;
+  font-size: clamp(2rem, 6vw, 2.75rem);
+}
+
+.page-header > p:last-child,
+.empty-state,
+.pollution-meta {
+  color: #6b7280;
+}
+
+.panel {
+  margin-top: 1rem;
+  padding: clamp(1.25rem, 4vw, 2rem);
+  border: 1px solid #cbd0d9;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgb(24 32 51 / 8%);
+}
+
+.declaration-panel {
+  border-color: #b7c8a9;
+  background: linear-gradient(145deg, #fff 0%, #fbfcf6 100%);
+}
+
+.declaration-panel h2 {
+  color: #35523b;
+  font-size: clamp(1.4rem, 4vw, 1.7rem);
+}
+
+.declaration-panel input:focus,
+.declaration-panel select:focus,
+.declaration-panel textarea:focus {
+  border-color: #547b58;
+  box-shadow: 0 0 0 3px rgb(84 123 88 / 18%);
+}
+
+.declaration-panel > form > button[type='submit'] {
+  background: #466b4a;
+}
+
+.declaration-panel > form > button[type='submit']:hover:not(:disabled) {
+  background: #35523b;
+}
+
+.font-credit {
+  display: block;
+  margin-top: 1.5rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid #e1e6d9;
+  color: #6b7280;
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+.font-credit a {
+  color: #466b4a;
+}
+
+.panel h2 {
+  margin-bottom: 1.25rem;
+  font-size: 1.25rem;
+}
+
+.filters {
+  /* Étape 6 : bloc visuel distinct pour les critères de filtrage. */
+  margin-bottom: 1.25rem;
+  padding: 1rem;
+  border: 1px solid #d8ddc8;
+  border-radius: 11px;
+  background: #f8faee;
+}
+
+.filters-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.filters-heading h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.filter-grid > .field-row {
+  align-items: end;
+}
+
+.filter-count {
+  margin: 1rem 0 0;
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
+form {
+  display: grid;
+  gap: 1rem;
+}
+
+.field,
+.field-row {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.field-row {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+label,
+legend {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+input,
+select,
+textarea {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 56px;
+  padding: 0.85rem 1rem;
+  border: 1px solid #cbd0d9;
+  border-radius: 11px;
+  color: inherit;
+  background: #fff;
+  font: inherit;
+  font-size: 1rem;
+  box-shadow: 0 1px 2px rgb(24 32 51 / 5%);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: #728092;
+  box-shadow: 0 0 0 3px rgb(114 128 146 / 16%);
+}
+
+fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 1rem;
+  border: 1px solid #cbd0d9;
+  border-radius: 11px;
+}
+
+legend {
+  padding: 0 0.35rem;
+}
+
+.field-error {
+  color: #a12a2a;
+}
+
+.message {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+}
+
+.message--error {
+  color: #7e1d1d;
+  background: #fff0f0;
+}
+
+.message--success {
+  color: #36533a;
+  background: #edf3d5;
+}
+
+.panel > .message {
+  margin-bottom: 1rem;
+}
+
+button {
+  justify-self: start;
+  min-height: 56px;
+  padding: 0.8rem 1.2rem;
+  border: 0;
+  border-radius: 11px;
+  color: #fff;
+  background: #4b5563;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  background: #374151;
+}
+
+button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.reset-filters {
+  padding: 0.5rem 0.75rem;
+  color: #374151;
+  background: #e7edcf;
+  font-size: 0.85rem;
+}
+
+.reset-filters:hover:not(:disabled) {
+  background: #dce5bd;
+}
+
+.pollution-list {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pollution-list li {
+  padding: 1rem;
+  border: 1px solid #d8ddc8;
+  border-radius: 11px;
+  background: #fff;
+}
+
+.pollution-list h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.pollution-list p {
+  margin: 0.75rem 0;
+}
+
+.pollution-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.badge {
+  padding: 0.3rem 0.6rem;
+  border-radius: 999px;
+  color: #374151;
+  background: #edf3d5;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.pollution-meta {
+  margin-bottom: 0 !important;
+  font-size: 0.85rem;
+}
+
+.detail-link {
+  display: inline-block;
+  margin-top: 0.8rem;
+  color: #4b5563;
+  font-weight: 700;
+}
+
+.delete-button {
+  margin: 0.8rem 0 0 1rem;
+  background: #9b3030;
+}
+
+.delete-button:hover:not(:disabled) {
+  background: #792424;
+}
+
+@media (max-width: 560px) {
+  /* Les grilles passent en une colonne sur les petits écrans. */
+  :host {
+    padding: 16px;
+  }
+
+  .page {
+    width: 100%;
+  }
+
+  .field-row {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.geolocate-button {
+  /* Bouton secondaire gris, comme l’action de géolocalisation du TP02. */
+  width: 100%;
+  min-height: 56px;
+  background: #9ca3af;
+}
+
+.geolocate-button:hover:not(:disabled) {
+  background: #858d9a;
+}
+
+:host * {
+  font-weight: 400;
+}
