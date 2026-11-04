@@ -1,8 +1,4 @@
 {
-<<<<<<< HEAD
-  "users": []
-}
-=======
   "pollutions": [
     {
       "titreDeclarationDePollution": "Du plastique de partout !",
@@ -50,4 +46,3 @@
     }
   ]
 }
->>>>>>> 1e85533251dc9f86d7a4706aefe60ae74d3fb02e

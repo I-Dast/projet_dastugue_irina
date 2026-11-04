@@ -18,7 +18,7 @@ services:
     plan: free
     region: oregon
     rootDir: api
-    buildCommand: npm install --include=dev && npm run build
+    buildCommand: npm ci && npm run build
     startCommand: npm run start
     healthCheckPath: /health
     envVars:
@@ -39,8 +39,8 @@ services:
   - type: web
     name: pollution-front
     runtime: static
-    rootDir: front/pollution
-    buildCommand: npm install && npm run build
+    rootDir: front
+    buildCommand: npm ci && npm run build -- --configuration production
     staticPublishPath: dist/pollution/browser
     routes:
       - type: rewrite
@@ -49,11 +49,4 @@ services:
     envVars:
       - key: NODE_VERSION
         value: 22.22.3
-      - key: API_HOST
-        fromService:
-          type: web
-          name: pollution-api
-          property: host
-
-
 
