@@ -1,8 +1,4 @@
 import { Routes } from '@angular/router';
-<<<<<<< HEAD
-
-export const routes: Routes = [];
-=======
 import { PollutionDetail } from './components/pollution-detail/pollution-detail';
 import { PollutionList } from './components/pollution-list/pollution-list';
 
@@ -14,4 +10,3 @@ export const routes: Routes = [
   // Toute URL inconnue revient à l’accueil.
   { path: '**', redirectTo: '' },
 ];
->>>>>>> 1e85533251dc9f86d7a4706aefe60ae74d3fb02e

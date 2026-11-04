@@ -1,15 +1,4 @@
 import { Component } from '@angular/core';
-<<<<<<< HEAD
-import { Signup } from './components/signup/signup';
-
-@Component({
-  imports: [Signup],
-  selector: 'app-root',
-  styleUrl: './app.css',
-  templateUrl: './app.html',
-})
-export class App {}
-=======
 import { RouterOutlet } from '@angular/router';
 
 @Component({
@@ -42,4 +31,3 @@ export class App {
     shell.style.setProperty('--pointer-y', '-1000px');
   }
 }
->>>>>>> 1e85533251dc9f86d7a4706aefe60ae74d3fb02e

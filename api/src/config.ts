@@ -13,18 +13,20 @@ export interface AppConfig {
 }
 
 const databaseUrl = process.env.DATABASE_URL;
-const host = databaseUrl
-  ? new URL(databaseUrl).hostname
-  : process.env.DB_HOST || "localhost";
-const isLocalHost = host === "localhost" || host === "127.0.0.1";
+const parsedDatabaseUrl = databaseUrl ? new URL(databaseUrl) : undefined;
 
 export const config: AppConfig = {
   BDD: {
-    host: process.env.DB_HOST || "dpg-dbhmiqutlv9c7395tk70-a",
-    port: process.env.DB_PORT || "5432",
-    user: process.env.DB_USER || "pollution_user",
-    password: process.env.DB_PASSWORD || "jBJbqzABIL35qQCDmcI9MKTANOLlqxAG",
-    bdname: process.env.DB_NAME || "pollution_db_68bs"
+    host: process.env.DB_HOST || parsedDatabaseUrl?.hostname || "localhost",
+    port: Number(process.env.DB_PORT || parsedDatabaseUrl?.port || 5432),
+    user: process.env.DB_USER || parsedDatabaseUrl?.username || "postgres",
+    password: process.env.DB_PASSWORD || parsedDatabaseUrl?.password || "",
+    database:
+      process.env.DB_NAME ||
+      parsedDatabaseUrl?.pathname.replace(/^\/+/, "") ||
+      "pollution_db",
+    url: databaseUrl,
+    ssl: process.env.DB_SSL === "true"
   }
 };
 
