@@ -8,8 +8,9 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
+import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
-import { SignupRequest, SignupService } from '../../services/signup';
+import { SignupRequest, UserService } from '../../services/user.service';
 
 const matchingPasswords: ValidatorFn = (
   control: AbstractControl,
@@ -19,22 +20,6 @@ const matchingPasswords: ValidatorFn = (
   return password === confirmPassword ? null : { passwordMismatch: true };
 };
 
-function validateBirthDate(control: AbstractControl<string>): ValidationErrors | null {
-  const value = control.value;
-  if (!value) {
-    return null;
-  }
-
-  const today = new Date();
-  const latestDate = [
-    today.getFullYear(),
-    String(today.getMonth() + 1).padStart(2, '0'),
-    String(today.getDate()).padStart(2, '0'),
-  ].join('-');
-
-  return value > latestDate ? { futureDate: true } : null;
-}
-
 @Component({
   imports: [ReactiveFormsModule],
   selector: 'app-signup',
@@ -43,10 +28,11 @@ function validateBirthDate(control: AbstractControl<string>): ValidationErrors |
 })
 export class Signup {
   private readonly formBuilder = inject(FormBuilder);
-  private readonly signupService = inject(SignupService);
+  private readonly router = inject(Router);
+  private readonly userService = inject(UserService);
 
-  readonly today = this.getLocalDateValue(new Date());
-
+  // Le formulaire ne collecte que les informations nécessaires au compte ;
+  // l’adresse et la date de naissance ne sont pas demandées.
   readonly form = this.formBuilder.nonNullable.group(
     {
       login: [
@@ -75,7 +61,6 @@ export class Signup {
           Validators.pattern(/^(?=.*\p{L})[\p{L} '-]+$/u),
         ],
       ],
-      adresse: ['', [Validators.required, Validators.pattern(/^(?=.*\S).+$/u)]],
       email: ['', [Validators.required, Validators.email]],
       telephone: [
         '',
@@ -84,7 +69,6 @@ export class Signup {
           Validators.pattern(/^(?=(?:\D*\d){8,15}\D*$)\+?[\d\s().-]+$/),
         ],
       ],
-      dateNaissance: ['', [Validators.required, validateBirthDate]],
     },
     { validators: matchingPasswords },
   );
@@ -92,14 +76,6 @@ export class Signup {
   isSubmitting = false;
   successMessage = '';
   errorMessage = '';
-
-  private getLocalDateValue(date: Date): string {
-    return [
-      date.getFullYear(),
-      String(date.getMonth() + 1).padStart(2, '0'),
-      String(date.getDate()).padStart(2, '0'),
-    ].join('-');
-  }
 
   submit(): void {
     if (this.form.invalid || this.isSubmitting) {
@@ -111,17 +87,18 @@ export class Signup {
     this.successMessage = '';
     this.errorMessage = '';
 
+    // La confirmation sert uniquement à valider le formulaire et n'est jamais transmise à l'API.
     const { confirmPassword: _confirmPassword, ...data } =
       this.form.getRawValue();
     const request: SignupRequest = data;
 
-    this.signupService
+    this.userService
       .signup(request)
       .pipe(finalize(() => (this.isSubmitting = false)))
       .subscribe({
         next: () => {
           this.successMessage = 'Inscription enregistrée avec succès.';
-          this.form.reset();
+          void this.router.navigateByUrl('/pollutions');
         },
         error: (error: unknown) => {
           const message =
@@ -129,7 +106,7 @@ export class Signup {
           this.errorMessage =
             typeof message === 'string'
               ? message
-              : 'Impossible de contacter le serveur. Vérifiez que JSON Server fonctionne sur le port 3000.';
+              : 'Impossible de contacter le serveur. Vérifiez que l’API est démarrée.';
         },
       });
   }

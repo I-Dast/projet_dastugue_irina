@@ -188,7 +188,7 @@ export class PollutionDetail implements OnInit {
     this.pollutionService.delete(pollution.id).subscribe({
       next: () => {
         this.isDeleting.set(false);
-        void this.router.navigateByUrl('/');
+        void this.router.navigateByUrl('/pollutions');
       },
       error: (error: unknown) => {
         this.isDeleting.set(false);

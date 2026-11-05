@@ -1,0 +1,122 @@
+<main class="page">
+  <header class="page-header">
+    <a class="back-link" routerLink="/pollutions">← Retour aux pollutions</a>
+    <p class="eyebrow">Nouvelle déclaration</p>
+    <h1>Ajouter une pollution</h1>
+    <p>Renseignez les informations de l’observation pour l’enregistrer.</p>
+  </header>
+
+  <section class="panel declaration-panel" aria-labelledby="form-title">
+    <h2 id="form-title">Détails de l’observation</h2>
+
+    <form [formGroup]="pollutionForm" (ngSubmit)="addPollution()">
+      <div class="field">
+        <label for="titre">Titre</label>
+        <input id="titre" type="text" formControlName="titreDeclarationDePollution">
+        @if (pollutionForm.controls.titreDeclarationDePollution.touched &&
+             pollutionForm.controls.titreDeclarationDePollution.hasError('required')) {
+          <small class="field-error">Le titre est obligatoire.</small>
+        } @else if (pollutionForm.controls.titreDeclarationDePollution.touched &&
+                    pollutionForm.controls.titreDeclarationDePollution.hasError('minlength')) {
+          <small class="field-error">Le titre doit contenir au moins 3 caractères.</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="type">Type de pollution</label>
+        <select id="type" formControlName="typePollution">
+          <option value="" disabled>Choisissez un type</option>
+          @for (type of typesPollution; track type) {
+            <option [value]="type">{{ type }}</option>
+          }
+        </select>
+        @if (pollutionForm.controls.typePollution.touched &&
+             pollutionForm.controls.typePollution.hasError('required')) {
+          <small class="field-error">Le type de pollution est obligatoire.</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="description">Description</label>
+        <textarea id="description" rows="4" formControlName="description"></textarea>
+        @if (pollutionForm.controls.description.touched &&
+             pollutionForm.controls.description.hasError('required')) {
+          <small class="field-error">La description est obligatoire.</small>
+        } @else if (pollutionForm.controls.description.touched &&
+                    pollutionForm.controls.description.hasError('minlength')) {
+          <small class="field-error">La description doit contenir au moins 10 caractères.</small>
+        } @else if (pollutionForm.controls.description.touched &&
+                    pollutionForm.controls.description.hasError('maxlength')) {
+          <small class="field-error">La description ne peut pas dépasser 500 caractères.</small>
+        }
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="dateObservation">Date de l’observation</label>
+          <input id="dateObservation" type="date" formControlName="dateObservation">
+          @if (pollutionForm.controls.dateObservation.touched &&
+               pollutionForm.controls.dateObservation.hasError('required')) {
+            <small class="field-error">La date de l’observation est obligatoire.</small>
+          }
+        </div>
+        <div class="field">
+          <label for="lieu">Lieu</label>
+          <input id="lieu" type="text" formControlName="lieu">
+          @if (pollutionForm.controls.lieu.touched &&
+               pollutionForm.controls.lieu.hasError('required')) {
+            <small class="field-error">Le lieu est obligatoire.</small>
+          }
+        </div>
+      </div>
+
+      <fieldset>
+        <legend>Coordonnées</legend>
+        <div class="field-row">
+          <div class="field">
+            <label for="latitude">Latitude</label>
+            <input id="latitude" type="number" min="-90" max="90" step="any" formControlName="latitude">
+          </div>
+          <div class="field">
+            <label for="longitude">Longitude</label>
+            <input id="longitude" type="number" min="-180" max="180" step="any" formControlName="longitude">
+          </div>
+        </div>
+      </fieldset>
+
+      <button class="geolocate-button" type="button" [disabled]="isLocating" (click)="locateDevice()">
+        {{ isLocating ? 'Géolocalisation en cours…' : 'Utiliser ma position' }}
+      </button>
+      @if (locationErrorMessage) {
+        <p class="message message--error" role="alert">{{ locationErrorMessage }}</p>
+      }
+
+      <div class="field">
+        <label for="photoUrl">URL de la photo (facultatif)</label>
+        <input id="photoUrl" type="url" formControlName="photoUrl">
+      </div>
+
+      @if (errorMessage) {
+        <p class="message message--error" role="alert">{{ errorMessage }}</p>
+      }
+
+      <div class="form-actions">
+        <button type="submit" [disabled]="isSaving">
+          {{ isSaving ? 'Ajout en cours…' : 'Enregistrer la pollution' }}
+        </button>
+        <a class="cancel-link" routerLink="/pollutions">Annuler</a>
+      </div>
+    </form>
+
+    <small class="font-credit">
+      Typographie Azimut, créée par Benjamin Blaess, Julien Priez et Mathieu Réguer —
+      <a href="https://creativecommons.org/licenses/by-nd/4.0/deed.fr" target="_blank" rel="noopener noreferrer">
+        licence CC BY-ND 4.0
+      </a>.
+    </small>
+  </section>
+</main>
+
+@if (recapPollution(); as pollution) {
+  <app-pollution-recap [pollution]="pollution" (close)="closeRecap()" />
+}

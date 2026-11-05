@@ -35,21 +35,51 @@ initRoutes(app);
 const start = async (): Promise<void> => {
   try {
     await db.sequelize.authenticate();
+    // Sequelize crée les tables manquantes déclarées par les modèles, sans remplacer les tables existantes.
     await db.sequelize.sync();
-    console.log("Connexion PostgreSQL établie; table pollution synchronisée.");
+    // Migration PostgreSQL idempotente : supprime aussi les anciennes valeurs déjà stockées dans ces colonnes.
+    // Cette suppression est définitive ; IF EXISTS permet de redémarrer sans erreur après la migration.
+    await db.sequelize.query(
+      'ALTER TABLE "users" DROP COLUMN IF EXISTS "adresse", DROP COLUMN IF EXISTS "dateNaissance"'
+    );
+    console.log("Connexion PostgreSQL établie; tables des modèles synchronisées.");
 
     const count = await db.pollutions.count();
     if (count === 0) {
       await db.pollutions.bulkCreate([
-        { ville: "Paris", polluant: "PM2.5", valeur: 28.5, date: "2026-10-18", description: "Qualité de l'air dégradée au centre-ville" },
-        { ville: "Lyon", polluant: "NO2", valeur: 42.1, date: "2026-10-18", description: "Pic de pollution lié au trafic routier" },
-        { ville: "Marseille", polluant: "O3", valeur: 55.0, date: "2026-10-17", description: "Ozone élevé en zone côtière ensoleillée" },
-        { ville: "Strasbourg", polluant: "PM10", valeur: 34.2, date: "2026-10-18", description: "Particules en suspension modérées" },
-        { ville: "Bordeaux", polluant: "PM2.5", valeur: 15.3, date: "2026-10-16", description: "Bonne qualité globale de l'air" },
-        { ville: "Lille", polluant: "NO2", valeur: 38.7, date: "2026-10-17", description: "Trafic dense aux abords de la rocade" },
-        { ville: "Nantes", polluant: "CO2", valeur: 12.0, date: "2026-10-18", description: "Conditions atmosphériques favorables" }
+        // Quelques déclarations de démonstration sont insérées uniquement dans une table vide.
+        {
+          titreDeclarationDePollution: "Déchets plastiques en centre-ville",
+          typePollution: "Plastique",
+          description: "Des déchets plastiques ont été observés près d'un espace public.",
+          dateObservation: "2026-10-18",
+          lieu: "Paris",
+          latitude: 48.8566,
+          longitude: 2.3522,
+          photoUrl: ""
+        },
+        {
+          titreDeclarationDePollution: "Dépôt sauvage près de la route",
+          typePollution: "Dépôt sauvage",
+          description: "Plusieurs encombrants ont été déposés au bord de la route.",
+          dateObservation: "2026-10-18",
+          lieu: "Lyon",
+          latitude: 45.764,
+          longitude: 4.8357,
+          photoUrl: ""
+        },
+        {
+          titreDeclarationDePollution: "Pollution de l'eau",
+          typePollution: "Eau",
+          description: "Une pollution de l'eau a été signalée près de la berge.",
+          dateObservation: "2026-10-17",
+          lieu: "Strasbourg",
+          latitude: 48.5734,
+          longitude: 7.7521,
+          photoUrl: ""
+        }
       ]);
-      console.log("Jeu de données initial inséré dans pollution.");
+      console.log("Jeu de démonstration inséré dans pollutions.");
     }
 
     const port = Number(process.env.PORT) || 3000;

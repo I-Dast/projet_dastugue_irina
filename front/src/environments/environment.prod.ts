@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  useMock: true,
-  apiBaseUrl: '',
-  apiUrl: '',
+  useMock: false,
+  apiBaseUrl: 'https://pollution-api-yqjx.onrender.com',
+  apiUrl: 'https://pollution-api-yqjx.onrender.com',
 };

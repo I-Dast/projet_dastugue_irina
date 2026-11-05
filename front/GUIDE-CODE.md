@@ -1,155 +1,106 @@
 # Guide de navigation dans le code
 
-Ce guide sert de sommaire cliquable pour retrouver les fonctionnalités du TP3.
-Les liens pointent vers les fichiers et les lignes où commencer la lecture.
-Dans VS Code, cliquez sur un lien pour ouvrir le fichier ; sur GitHub, le lien
-affiche directement la ligne correspondante.
+Ce guide présente le parcours actuel de l’application et indique où lire chaque
+fonctionnalité. Les composants Angular gèrent l’écran et les interactions, les
+services centralisent les appels HTTP, et l’API Node.js valide les données avant
+de les enregistrer dans PostgreSQL.
 
-## Vue d’ensemble du parcours
+## Parcours de navigation
 
-1. La page d’accueil affiche le formulaire et charge la liste via `PollutionService`.
-2. La création envoie une requête `POST`, met à jour la liste et affiche un récapitulatif.
-3. La liste permet de filtrer, ouvrir un détail et supprimer une pollution.
-4. Le détail permet de modifier une pollution avec `PUT` ou de la supprimer avec `DELETE`.
-
-Les composants s’occupent de l’écran et de ses interactions. Les services
-encapsulent les communications HTTP et les fonctionnalités du navigateur. En
-développement, un intercepteur peut répondre à ces appels avec un backend simulé.
-
-## Page principale et déclaration
-
-| Sujet | Code à ouvrir | Ce qu’on y trouve |
+| Écran | URL | Rôle |
 |---|---|---|
-| Composant principal de la liste | [PollutionList, signaux et filtres](./src/app/components/pollution-list/pollution-list.ts#L16) | Classe Angular, services injectés, état réactif et liste calculée. |
-| Règles de validation du formulaire | [pollutionForm](./src/app/components/pollution-list/pollution-list.ts#L76) | Champs, types et validateurs requis. |
-| Chargement initial | [ngOnInit](./src/app/components/pollution-list/pollution-list.ts#L87) | Appelle l’API au premier affichage et traite succès ou erreur. |
-| Création et ouverture du récapitulatif | [addPollution](./src/app/components/pollution-list/pollution-list.ts#L188) | Vérifie le formulaire, envoie `POST`, ajoute la réponse à la liste et ouvre le récapitulatif. |
-| Formulaire HTML | [pollution-list.html — déclaration](./src/app/components/pollution-list/pollution-list.html#L9) | `formGroup`, `formControlName`, soumission, erreurs et bouton d’envoi. |
-| Bouton de géolocalisation | [pollution-list.html — Utiliser ma position](./src/app/components/pollution-list/pollution-list.html#L103) | Événement `(click)` relié à `locateDevice()`. |
-| Style de la page | [pollution-list.css](./src/app/components/pollution-list/pollution-list.css#L1) | Mise en page, charte graphique et adaptation mobile. |
+| Inscription | `/` | Crée un compte puis ouvre la liste après confirmation de l’API. |
+| Liste des pollutions | `/pollutions` | Charge, filtre et affiche les déclarations ; permet le détail et la suppression. |
+| Nouvelle pollution | `/pollutions/new` | Présente le formulaire de création et le récapitulatif après succès. |
+| Détail | `/pollutions/:id` | Affiche une déclaration et permet de la modifier ou de la supprimer. |
 
-## Backend simulé et configuration HTTP
+Le routage est défini dans [app.routes.ts](./src/app/app.routes.ts). La route
+`/pollutions/new` est déclarée avant la route paramétrée `/pollutions/:id`, afin
+que `new` soit traité comme la page de création.
 
-| Sujet | Code à ouvrir | Ce qu’on y trouve |
+## Inscription et données utilisateur
+
+| Sujet | Code à ouvrir | Explication |
 |---|---|---|
-| Choix du backend | [configuration HttpClient](./src/app/app.config.ts#L8) | Enregistre l’intercepteur seulement lorsque `environment.useMock` vaut `true`. |
-| Intercepteur du backend simulé | [mockBackendInterceptor](./src/app/interceptors/mock-backend.interceptor.ts#L14) | Intercepte les routes pollution et simule `GET`, `POST`, `PUT` et `DELETE`. |
-| Stockage et validation des données | [lecture et écriture du stockage local](./src/app/interceptors/mock-backend.interceptor.ts#L128) | Persiste les déclarations dans `localStorage`, valide les données et signale les erreurs HTTP. |
-| Mode développement | [environment.ts](./src/environments/environment.ts#L3) | `useMock: true` active le backend simulé. |
-| Mode production | [environment.prod.ts](./src/environments/environment.prod.ts#L1) | `useMock: false` laisse passer les appels vers l’URL configurée. |
-| Tests du backend simulé | [mock-backend.interceptor.spec.ts](./src/app/interceptors/mock-backend.interceptor.spec.ts#L1) | Vérifie les opérations CRUD et la réponse 404 pour un identifiant inconnu. |
+| Formulaire et validation | [signup.ts](./src/app/components/signup/signup.ts) | Définit les champs utiles au compte, leurs validateurs et la confirmation du mot de passe. |
+| Formulaire affiché | [signup.html](./src/app/components/signup/signup.html) | Présente les champs et les erreurs de validation accessibles. |
+| Requête d’inscription | [UserService](./src/app/services/user.service.ts) | Envoie les seules données conservées par l’API. |
+| Contrôleur utilisateur | [user.controllers.ts](../api/src/controllers/user.controllers.ts) | Valide une liste blanche de champs, crée le compte et construit les réponses publiques. |
+| Modèle PostgreSQL | [users.model.ts](../api/src/models/users.model.ts) | Décrit les colonnes persistées dans la table `users`. |
+| Routes utilisateur | [user.routes.ts](../api/src/routes/user.routes.ts) | Expose la création, la liste et la suppression sous `/api/users`. |
+| Tests | [signup.spec.ts](./src/app/components/signup/signup.spec.ts) · [user.service.spec.ts](./src/app/services/user.service.spec.ts) · [controllers.test.cjs](../api/tests/controllers.test.cjs) | Vérifient les champs envoyés, l’absence des données supprimées et les réponses API. |
 
-Par défaut, le backend simulé démarre avec une liste vide. Les créations,
-modifications et suppressions sont conservées dans le stockage local du
-navigateur, sous la clé `tp3.mock-backend.pollutions.v1`. Pour repartir d’une
-liste vide, supprimer cette clé dans les outils de développement du navigateur.
+Le compte conserve uniquement l’identifiant, le nom, le prénom, l’e-mail, le
+téléphone et le hash du mot de passe. **L’adresse postale et la date de
+naissance ne sont plus demandées par le front, acceptées pour stockage par
+l’API, ni renvoyées dans les réponses utilisateur.** La confirmation du mot de
+passe n’est utilisée que pour valider le formulaire et n’est pas envoyée.
 
-Pour tester JSON Server à la place, démarrer `npm run api`, régler
-`useMock: false` dans `src/environments/environment.ts`, puis lancer
-`npm start`. La configuration de production désactive également l’intercepteur ;
-remplacer alors `apiBaseUrl` dans `environment.prod.ts` par l’adresse réelle de
-l’API avant le déploiement.
+Au démarrage, [index.ts](../api/src/index.ts) exécute une migration PostgreSQL
+qui supprime les anciennes colonnes `adresse` et `dateNaissance` de `users`.
+Elle est répétable sans erreur, mais supprime définitivement les valeurs
+existantes de ces colonnes. Les autres données des comptes ne sont pas
+supprimées.
 
-## Étape 4 — modifier une pollution
+## Déclarer une pollution et voir le récapitulatif
 
-| Sujet | Code à ouvrir | Ce qu’on y trouve |
+| Sujet | Code à ouvrir | Explication |
 |---|---|---|
-| Chargement par identifiant | [ngOnInit du détail](./src/app/components/pollution-detail/pollution-detail.ts#L50) | Lit `:id` dans l’URL et demande la pollution à l’API. |
-| Formulaire et règles d’édition | [editForm](./src/app/components/pollution-detail/pollution-detail.ts#L39) | Champs prévus pour modifier une déclaration. |
-| Préremplissage | [startEditing](./src/app/components/pollution-detail/pollution-detail.ts#L84) | Copie les valeurs affichées dans le formulaire. |
-| Annulation | [cancelEditing](./src/app/components/pollution-detail/pollution-detail.ts#L106) | Quitte l’édition sans envoyer de requête. |
-| Enregistrement des changements | [saveChanges](./src/app/components/pollution-detail/pollution-detail.ts#L136) | Valide les données et appelle la méthode `PUT`. |
-| Bouton et formulaire | [pollution-detail.html — édition](./src/app/components/pollution-detail/pollution-detail.html#L22) | Actions Modifier/Supprimer et formulaire conditionnel. |
-| Requête HTTP `PUT` | [PollutionService.update](./src/app/services/pollution.service.ts#L36) | Construit l’URL de l’élément et envoie ses champs modifiés. |
-| Tests | [tests de modification](./src/app/components/pollution-detail/pollution-detail.spec.ts#L69) | Vérifient la requête `PUT` et la mise à jour de l’affichage. |
+| Formulaire et validation | [pollution-create.ts](./src/app/components/pollution-create/pollution-create.ts) | Valide les champs, demande la géolocalisation et envoie la déclaration. |
+| Formulaire affiché | [pollution-create.html](./src/app/components/pollution-create/pollution-create.html) | Relie les contrôles du formulaire aux actions et erreurs du composant. |
+| Création HTTP | [PollutionService.create](./src/app/services/pollution.service.ts) | Envoie un `POST` à l’API et transforme les erreurs en messages affichables. |
+| Fenêtre de récapitulatif | [PollutionRecap](./src/app/components/pollution-recap/pollution-recap.ts) · [pollution-recap.html](./src/app/components/pollution-recap/pollution-recap.html) | Présente les informations confirmées par l’API et permet de fermer la fenêtre. |
+| Rendu après succès | [pollution-create.html](./src/app/components/pollution-create/pollution-create.html) | Affiche le récapitulatif seulement quand la réponse de création est reçue. |
+| Test du parcours | [pollution-create.spec.ts](./src/app/components/pollution-create/pollution-create.spec.ts) | Vérifie la requête `POST` et l’apparition du récapitulatif après sa réponse. |
 
-## Étape 5 — supprimer une pollution
+Le récapitulatif ne s’ouvre qu’après une création confirmée. Si l’API renvoie
+une erreur, le formulaire reste affiché avec un message explicite. L’état du
+récapitulatif est un signal Angular afin que la réponse asynchrone mette
+immédiatement à jour le template.
 
-| Sujet | Code à ouvrir | Ce qu’on y trouve |
+## Liste, filtres et détail
+
+| Sujet | Code à ouvrir | Explication |
 |---|---|---|
-| Suppression depuis la liste | [deletePollution de la liste](./src/app/components/pollution-list/pollution-list.ts#L241) | Confirmation, requête, retrait local après succès et affichage d’erreur. |
-| Bouton de suppression dans la liste | [pollution-list.html — action Supprimer](./src/app/components/pollution-list/pollution-list.html#L227) | Transmet la pollution sélectionnée à la méthode du composant. |
-| Suppression depuis le détail | [deletePollution du détail](./src/app/components/pollution-detail/pollution-detail.ts#L181) | Confirme, supprime puis navigue vers la liste. |
-| Requête HTTP `DELETE` | [PollutionService.delete](./src/app/services/pollution.service.ts#L44) | Supprime une ressource via son identifiant. |
-| Tests | [tests de suppression dans la liste](./src/app/components/pollution-list/pollution-list.spec.ts#L139) · [test depuis le détail](./src/app/components/pollution-detail/pollution-detail.spec.ts#L116) | Vérifient confirmation, requête et résultat attendu. |
+| Chargement et filtres | [pollution-list.ts](./src/app/components/pollution-list/pollution-list.ts) | Charge les déclarations et combine recherche, type, lieu et dates. |
+| Liste et actions | [pollution-list.html](./src/app/components/pollution-list/pollution-list.html) | Affiche les résultats et les liens vers l’ajout, le détail et la suppression. |
+| Détail et modification | [pollution-detail.ts](./src/app/components/pollution-detail/pollution-detail.ts) · [pollution-detail.html](./src/app/components/pollution-detail/pollution-detail.html) | Charge une pollution, permet de modifier ses champs et de la supprimer. |
+| Modèle partagé | [Pollution](./src/app/models/pollution.ts) | Décrit les propriétés échangées entre les formulaires, l’API et la base. |
+| Routes API | [pollution.routes.ts](../api/src/routes/pollution.routes.ts) | Déclare les opérations `GET`, `POST`, `PUT` et `DELETE`. |
+| Validation et contrôleur API | [pollution.controllers.ts](../api/src/controllers/pollution.controllers.ts) | Vérifie les données et identifiants avant les opérations Sequelize. |
+| Modèle Sequelize | [pollutions.model.ts](../api/src/models/pollutions.model.ts) | Décrit les colonnes de la table `pollutions`. |
 
-## Étape 6 — filtrer selon plusieurs critères
+## Géolocalisation
 
-| Sujet | Code à ouvrir | Ce qu’on y trouve |
+| Sujet | Code à ouvrir | Explication |
 |---|---|---|
-| Critères et calcul des résultats | [filteredPollutions](./src/app/components/pollution-list/pollution-list.ts#L25) | Recherche, type, lieu et bornes de dates combinés avec une logique ET. |
-| Mise à jour d’un critère | [méthodes de mise à jour des filtres](./src/app/components/pollution-list/pollution-list.ts#L110) | Lisent les événements HTML et modifient les signaux. |
-| Réinitialisation | [resetFilters](./src/app/components/pollution-list/pollution-list.ts#L155) | Vide tous les critères. |
-| Contrôles de filtre | [pollution-list.html — filtres](./src/app/components/pollution-list/pollution-list.html#L151) | Champs HTML reliés aux événements et valeurs des critères. |
-| Affichage des résultats | [pollution-list.html — résultats filtrés](./src/app/components/pollution-list/pollution-list.html#L214) | Message sans résultat et boucle `@for`. |
-| Test des critères combinés | [test des filtres](./src/app/components/pollution-list/pollution-list.spec.ts#L201) | Vérifie le filtrage simultané et la remise à zéro. |
+| API de géolocalisation du navigateur | [GeolocationService](./src/app/services/geolocation.service.ts) | Récupère les coordonnées et traduit les erreurs du navigateur. |
+| Utilisation à la création | [PollutionCreate.locateDevice](./src/app/components/pollution-create/pollution-create.ts) | Remplit les champs latitude et longitude du formulaire. |
+| Utilisation dans le détail | [PollutionDetail.locateDevice](./src/app/components/pollution-detail/pollution-detail.ts) | Remplit les coordonnées pendant la modification. |
 
-## Géolocalisation — reprise du TP2
+## Configuration et lancement local
 
-| Sujet | Code à ouvrir | Ce qu’on y trouve |
+| Sujet | Code à ouvrir | Explication |
 |---|---|---|
-| Accès à la géolocalisation du navigateur | [GeolocationService.getCurrentPosition](./src/app/services/geolocation.service.ts#L10) | Promesse, coordonnées latitude/longitude, précision, délai et gestion d’erreurs. |
-| Messages de géolocalisation | [getErrorMessage](./src/app/services/geolocation.service.ts#L35) | Transforme les codes d’erreur du navigateur en messages lisibles. |
-| Remplir le formulaire de création | [locateDevice de la liste](./src/app/components/pollution-list/pollution-list.ts#L164) | Attend la position puis renseigne latitude et longitude. |
-| Remplir le formulaire de modification | [locateDevice du détail](./src/app/components/pollution-detail/pollution-detail.ts#L112) | Même opération pour le formulaire d’édition. |
-| Tests sans position réelle | [test géolocalisation de la liste](./src/app/components/pollution-list/pollution-list.spec.ts#L92) · [test géolocalisation du détail](./src/app/components/pollution-detail/pollution-detail.spec.ts#L153) | Simulent le service pour éviter une demande réelle au navigateur. |
+| URL de l’API et mode mock | [environment.ts](./src/environments/environment.ts) | Le développement courant utilise l’API Node à `http://localhost:3000` (`useMock: false`). |
+| Sélection de l’intercepteur | [app.config.ts](./src/app/app.config.ts) | Active le backend simulé uniquement si `useMock` est vrai. |
+| URL des requêtes pollution | [PollutionService](./src/app/services/pollution.service.ts) | Choisit l’endpoint selon la configuration de l’environnement. |
+| Configuration PostgreSQL | [config API](../api/src/config.ts) | Lit les paramètres de connexion fournis par `api/.env`. |
 
-## Récapitulatif — reprise du TP2
+Depuis la racine du dépôt, `npm run dev` démarre le front et l’API dans le même
+terminal. PostgreSQL doit être démarré et accessible à l’API ; le front est
+disponible sur <http://localhost:4200>.
 
-| Sujet | Code à ouvrir | Ce qu’on y trouve |
-|---|---|---|
-| Composant du récapitulatif | [PollutionRecap](./src/app/components/pollution-recap/pollution-recap.ts#L14) | Entrée `pollution`, sortie `close` et formatage de la date. |
-| Contenu de la fenêtre | [pollution-recap.html](./src/app/components/pollution-recap/pollution-recap.html#L1) | Présente les champs, la photo éventuelle et les actions de fermeture. |
-| Apparition après création | [pollution-list.html — composant récapitulatif](./src/app/components/pollution-list/pollution-list.html#L248) | Affiche le composant seulement si la création a réussi. |
-| Fermeture du récapitulatif | [closeRecap](./src/app/components/pollution-list/pollution-list.ts#L226) | Efface l’état qui rend la fenêtre visible. |
-| Style de la fenêtre | [pollution-recap.css](./src/app/components/pollution-recap/pollution-recap.css#L1) | Fond modal, carte et adaptation mobile. |
+## Tests et build
 
-## Services, données et environnement
+Depuis la racine du dépôt :
 
-| Sujet | Code à ouvrir | Ce qu’on y trouve |
-|---|---|---|
-| Toutes les opérations API et leurs erreurs | [PollutionService](./src/app/services/pollution.service.ts#L8) | `list`, `getById`, `create`, `update` et `delete`, avec centralisation des erreurs via `catchError`. |
-| Modèle d’une pollution | [Pollution](./src/app/models/pollution.ts#L15) | Champs partagés par les composants et l’API. |
-| Types disponibles | [TYPES_POLLUTION](./src/app/models/pollution.ts#L1) | Catégories de pollution et type TypeScript associé. |
-| Construction des URL HTTP | [PollutionService](./src/app/services/pollution.service.ts#L8) | Construit l’endpoint à partir de `environment.apiBaseUrl`. |
-| Routage | [app.routes.ts](./src/app/app.routes.ts#L5) | Associe l’accueil et `/pollutions/:id` à leurs composants. |
-| Configuration Angular | [app.config.ts](./src/app/app.config.ts#L8) | Configure le client HTTP, l’intercepteur optionnel et le routeur. |
+```sh
+npm --prefix front test -- --watch=false
+npm --prefix front run build -- --configuration production
+npm --prefix api test
+```
 
-## Apparence et fond interactif
-
-| Sujet | Code à ouvrir | Ce qu’on y trouve |
-|---|---|---|
-| Shell de l’application | [app.html](./src/app/app.html#L1) | Entoure les routes et transmet les mouvements et départs du pointeur. |
-| Suivi du pointeur | [App.updateBackgroundPointer](./src/app/app.ts#L9) | Met à jour la position du halo et le masque la sortie du pointeur. |
-| Police et fond | [styles.css](./src/styles.css#L1) | Charge Azimut et superpose l’image de fond avec transparence et halo au survol. |
-| Image de fond | [page-background.png](./public/page-background.png) | Image décorative publiée avec les ressources statiques. |
-
-## Lire les types et paramètres courants
-
-- `id: number | string` : identifiant attribué par l’API ; il peut être numérique
-  ou textuel. `encodeURIComponent(id)` le prépare pour l’insérer dans une URL.
-- `Omit<Pollution, 'id'>` : TypeScript prend la structure `Pollution` en retirant
-  `id`, car le serveur gère cet identifiant à la création et l’URL le précise pour
-  une modification.
-- `Observable<Pollution>` : résultat asynchrone d’une requête HTTP. `subscribe`
-  fournit `next` en cas de succès et `error` en cas d’échec.
-- `signal(valeur)` : état réactif Angular. `set` remplace sa valeur ; `update`
-  calcule une nouvelle valeur à partir de l’ancienne.
-- `computed(() => ...)` : valeur dérivée, recalculée quand les signaux consultés
-  dans sa fonction changent.
-- `inject(Service)` : demande à Angular l’instance partagée d’un service.
-- `input.required<T>()` : donnée obligatoire fournie par le composant parent.
-  `output<void>()` : événement sans donnée envoyé du composant enfant vers le parent.
-- Dans un template, `[propriete]="valeur"` transmet une valeur à un élément ou à
-  un composant ; `(evenement)="methode()"` réagit à un événement ; `@if` et
-  `@for` affichent conditionnellement des éléments ou parcourent une liste.
-
-## Vérifications automatisées
-
-- [Tests de la liste](./src/app/components/pollution-list/pollution-list.spec.ts#L1)
-- [Tests du détail](./src/app/components/pollution-detail/pollution-detail.spec.ts#L1)
-- [Tests du backend simulé](./src/app/interceptors/mock-backend.interceptor.spec.ts#L1)
-- [Tests des erreurs API](./src/app/services/pollution.service.spec.ts#L1)
-
-Depuis le dossier `tp3`, lancez `npm test -- --watch=false` pour exécuter les tests
-et `npm run build` pour compiler l’application.
+Les tests du front couvrent les composants et services Angular. Les tests de
+l’API compilent TypeScript puis utilisent des méthodes Sequelize simulées : ils
+ne nécessitent pas de connexion PostgreSQL réelle.

@@ -1,6 +1,6 @@
 {
   "private": true,
   "scripts": {
-    "dev": "npm --prefix front run dev"
+    "dev": "npm --prefix front exec -- concurrently --kill-others --names api,front \"npm --prefix api run dev\" \"npm --prefix front run dev\""
   }
 }

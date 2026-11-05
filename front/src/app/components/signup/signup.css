@@ -27,7 +27,7 @@
   margin: 0 0 0.5rem;
   color: #527d20;
   font-size: 0.8rem;
-  font-weight: 700;
+  font-weight: 400;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -63,7 +63,7 @@ button,
 
 label {
   font-size: 0.9rem;
-  font-weight: 700;
+  font-weight: 400;
 }
 
 input {
@@ -96,7 +96,6 @@ button {
   color: #fff;
   cursor: pointer;
   font: inherit;
-  font-weight: 700;
   transition: background-color 150ms ease, transform 150ms ease;
 }
 
