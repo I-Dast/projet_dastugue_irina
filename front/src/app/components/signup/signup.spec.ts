@@ -4,6 +4,7 @@ import {
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter, Router } from '@angular/router';
 import { Signup } from './signup';
 
 describe('Signup', () => {
@@ -14,7 +15,7 @@ describe('Signup', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Signup],
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Signup);
@@ -65,6 +66,8 @@ describe('Signup', () => {
       dateNaissance: '1815-12-10',
     });
 
+    const router = TestBed.inject(Router);
+    const navigateSpy = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
     component.submit();
 
     const request = httpTesting.expectOne('http://localhost:3000/api/users');
@@ -91,5 +94,6 @@ describe('Signup', () => {
       dateNaissance: '1815-12-10',
     });
     expect(component.successMessage).toBe('Inscription enregistrée avec succès.');
+    expect(navigateSpy).toHaveBeenCalledWith('/pollutions');
   });
 });

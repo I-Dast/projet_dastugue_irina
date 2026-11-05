@@ -115,7 +115,7 @@ describe('PollutionDetail', () => {
     httpTestingController.verify();
   });
 
-  // Étape 5 : après confirmation, DELETE réussit et le routeur revient à la liste.
+  // Après confirmation, DELETE réussit et le routeur revient à la liste.
   it('should delete the selected pollution and return to the list after confirmation', () => {
     const fixture = TestBed.createComponent(PollutionDetail);
     const httpTestingController = TestBed.inject(HttpTestingController);
@@ -146,7 +146,7 @@ describe('PollutionDetail', () => {
     expect(request.request.method).toBe('DELETE');
     request.flush(null);
 
-    expect(navigateSpy).toHaveBeenCalledWith('/');
+    expect(navigateSpy).toHaveBeenCalledWith('/pollutions');
     httpTestingController.verify();
     confirmSpy.mockRestore();
     navigateSpy.mockRestore();

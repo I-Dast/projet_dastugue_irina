@@ -16,7 +16,7 @@
   display: inline-block;
   margin-bottom: 1rem;
   color: #4b5563;
-  font-weight: 700;
+  font-weight: 400;
 }
 
 .detail-card {
@@ -39,7 +39,7 @@
   margin: 0 0 0.5rem;
   color: #4b5563;
   font-size: 0.8rem;
-  font-weight: 700;
+  font-weight: 400;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -81,7 +81,7 @@ h1 {
 label,
 legend {
   font-size: 0.9rem;
-  font-weight: 700;
+  font-weight: 400;
 }
 
 input,
@@ -154,7 +154,7 @@ dt {
   margin-bottom: 0.4rem;
   color: #6b7280;
   font-size: 0.85rem;
-  font-weight: 700;
+  font-weight: 400;
 }
 
 dd {
@@ -205,7 +205,6 @@ button {
   background: #4b5563;
   font: inherit;
   font-size: 1rem;
-  font-weight: 700;
   cursor: pointer;
 }
 

@@ -8,6 +8,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
+import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 import { SignupRequest, UserService } from '../../services/user.service';
 
@@ -43,6 +44,7 @@ function validateBirthDate(control: AbstractControl<string>): ValidationErrors |
 })
 export class Signup {
   private readonly formBuilder = inject(FormBuilder);
+  private readonly router = inject(Router);
   private readonly userService = inject(UserService);
 
   readonly today = this.getLocalDateValue(new Date());
@@ -121,7 +123,7 @@ export class Signup {
       .subscribe({
         next: () => {
           this.successMessage = 'Inscription enregistrée avec succès.';
-          this.form.reset();
+          void this.router.navigateByUrl('/pollutions');
         },
         error: (error: unknown) => {
           const message =
@@ -129,7 +131,7 @@ export class Signup {
           this.errorMessage =
             typeof message === 'string'
               ? message
-              : 'Impossible de contacter le serveur. Vérifiez que JSON Server fonctionne sur le port 3000.';
+              : 'Impossible de contacter le serveur. Vérifiez que l’API est démarrée.';
         },
       });
   }
