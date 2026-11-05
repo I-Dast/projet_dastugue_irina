@@ -3,9 +3,13 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { GeolocationService } from '../../services/geolocation.service';
+import { environment } from '../../../environments/environment';
 import { PollutionList } from './pollution-list';
 
 describe('PollutionList', () => {
+  // Les tests ciblent la même route API que le service Angular.
+  const endpoint = `${environment.apiUrl.replace(/\/$/, '')}/api/pollutions`;
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [PollutionList],
@@ -31,7 +35,7 @@ describe('PollutionList', () => {
     };
 
     fixture.detectChanges();
-    const listRequest = httpTestingController.expectOne('http://localhost:53903/tp3/pollution');
+    const listRequest = httpTestingController.expectOne(endpoint);
     expect(listRequest.request.method).toBe('GET');
     listRequest.flush([]);
 
@@ -47,7 +51,7 @@ describe('PollutionList', () => {
     });
     component.addPollution();
 
-    const request = httpTestingController.expectOne('http://localhost:53903/tp3/pollution');
+    const request = httpTestingController.expectOne(endpoint);
     expect(request.request.method).toBe('POST');
     expect(request.request.body).toEqual(component.pollutionForm.getRawValue());
     request.flush(pollution);
@@ -73,7 +77,7 @@ describe('PollutionList', () => {
     const httpTestingController = TestBed.inject(HttpTestingController);
 
     fixture.detectChanges();
-    httpTestingController.expectOne('http://localhost:53903/tp3/pollution').flush([]);
+    httpTestingController.expectOne(endpoint).flush([]);
     fixture.detectChanges();
 
     fixture.nativeElement.querySelector('form button[type="submit"]').click();
@@ -84,7 +88,7 @@ describe('PollutionList', () => {
     expect(fixture.nativeElement.textContent).toContain('La description est obligatoire.');
     expect(fixture.nativeElement.textContent).toContain('La date de l’observation est obligatoire.');
     expect(fixture.nativeElement.textContent).toContain('Le lieu est obligatoire.');
-    httpTestingController.expectNone('http://localhost:53903/tp3/pollution');
+    httpTestingController.expectNone(endpoint);
     httpTestingController.verify();
   });
 
@@ -122,7 +126,7 @@ describe('PollutionList', () => {
     };
 
     fixture.detectChanges();
-    const request = httpTestingController.expectOne('http://localhost:53903/tp3/pollution');
+    const request = httpTestingController.expectOne(endpoint);
     expect(request.request.method).toBe('GET');
     request.flush([pollution]);
     fixture.detectChanges();
@@ -153,11 +157,11 @@ describe('PollutionList', () => {
     };
 
     fixture.detectChanges();
-    httpTestingController.expectOne('http://localhost:53903/tp3/pollution').flush([pollution]);
+    httpTestingController.expectOne(endpoint).flush([pollution]);
     fixture.detectChanges();
 
     fixture.nativeElement.querySelector('.delete-button').click();
-    const request = httpTestingController.expectOne('http://localhost:53903/tp3/pollution/1');
+    const request = httpTestingController.expectOne(`${endpoint}/1`);
     expect(confirmSpy).toHaveBeenCalled();
     expect(request.request.method).toBe('DELETE');
     request.flush(null);
@@ -187,12 +191,12 @@ describe('PollutionList', () => {
     };
 
     fixture.detectChanges();
-    httpTestingController.expectOne('http://localhost:53903/tp3/pollution').flush([pollution]);
+    httpTestingController.expectOne(endpoint).flush([pollution]);
     fixture.detectChanges();
     fixture.nativeElement.querySelector('.delete-button').click();
 
     expect(fixture.componentInstance.pollutions()).toEqual([pollution]);
-    httpTestingController.expectNone('http://localhost:53903/tp3/pollution/1');
+    httpTestingController.expectNone(`${endpoint}/1`);
     httpTestingController.verify();
     confirmSpy.mockRestore();
   });
@@ -238,7 +242,7 @@ describe('PollutionList', () => {
     ];
 
     fixture.detectChanges();
-    httpTestingController.expectOne('http://localhost:53903/tp3/pollution').flush(pollutions);
+    httpTestingController.expectOne(endpoint).flush(pollutions);
     fixture.detectChanges();
 
     const component = fixture.componentInstance;

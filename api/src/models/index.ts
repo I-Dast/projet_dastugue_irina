@@ -1,6 +1,7 @@
 import { Sequelize } from "sequelize";
 import { BDD } from "../config";
 import definePollutions, { PollutionModel } from "./pollutions.model";
+import defineUsers, { UserModel } from "./users.model";
 
 const sequelizeOptions = {
   dialect: "postgres" as const,
@@ -22,24 +23,26 @@ const sequelize = BDD.url
       ...sequelizeOptions,
       protocol: "postgres"
     })
-  : new Sequelize(BDD.database, {
+  : new Sequelize(BDD.database, BDD.user, BDD.password, {
       ...sequelizeOptions,
       host: BDD.host,
-      port: BDD.port,
-      username: BDD.user,
-      password: BDD.password
+      port: BDD.port
     });
 
 export interface Database {
   Sequelize: typeof Sequelize;
   sequelize: Sequelize;
   pollutions: PollutionModel;
+  users: UserModel;
 }
 
 export const db: Database = {
   Sequelize,
   sequelize,
-  pollutions: definePollutions(sequelize, Sequelize)
+  // Le modèle pollution décrit les déclarations au format attendu par l'application Angular.
+  pollutions: definePollutions(sequelize),
+  // Le modèle user stocke les comptes créés par l'API d'inscription.
+  users: defineUsers(sequelize)
 };
 
 export default db;

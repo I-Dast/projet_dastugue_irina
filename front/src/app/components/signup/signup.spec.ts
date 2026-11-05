@@ -67,7 +67,7 @@ describe('Signup', () => {
 
     component.submit();
 
-    const request = httpTesting.expectOne('http://localhost:3000/users');
+    const request = httpTesting.expectOne('http://localhost:3000/api/users');
     expect(request.request.method).toBe('POST');
     expect(request.request.body).toEqual({
       login: 'ada.lovelace',
@@ -80,7 +80,16 @@ describe('Signup', () => {
       dateNaissance: '1815-12-10',
     });
     expect(request.request.body.confirmPassword).toBeUndefined();
-    request.flush({ id: 1 });
+    request.flush({
+      id: 1,
+      login: 'ada.lovelace',
+      nom: 'Lovelace',
+      prenom: 'Ada',
+      adresse: '1 rue des Tests',
+      email: 'ada@example.com',
+      telephone: '+33123456789',
+      dateNaissance: '1815-12-10',
+    });
     expect(component.successMessage).toBe('Inscription enregistrée avec succès.');
   });
 });

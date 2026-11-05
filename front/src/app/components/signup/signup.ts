@@ -9,7 +9,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { finalize } from 'rxjs';
-import { SignupRequest, SignupService } from '../../services/signup';
+import { SignupRequest, UserService } from '../../services/user.service';
 
 const matchingPasswords: ValidatorFn = (
   control: AbstractControl,
@@ -43,7 +43,7 @@ function validateBirthDate(control: AbstractControl<string>): ValidationErrors |
 })
 export class Signup {
   private readonly formBuilder = inject(FormBuilder);
-  private readonly signupService = inject(SignupService);
+  private readonly userService = inject(UserService);
 
   readonly today = this.getLocalDateValue(new Date());
 
@@ -115,7 +115,7 @@ export class Signup {
       this.form.getRawValue();
     const request: SignupRequest = data;
 
-    this.signupService
+    this.userService
       .signup(request)
       .pipe(finalize(() => (this.isSubmitting = false)))
       .subscribe({
