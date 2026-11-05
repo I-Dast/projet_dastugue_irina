@@ -16,10 +16,8 @@ describe('UserService', () => {
     login: 'ada.lovelace',
     nom: 'Lovelace',
     prenom: 'Ada',
-    adresse: '1 rue des Tests',
     email: 'ada@example.com',
     telephone: '+33123456789',
-    dateNaissance: '1815-12-10',
   };
 
   beforeEach(() => {
@@ -37,10 +35,8 @@ describe('UserService', () => {
       login: userProfile.login,
       nom: userProfile.nom,
       prenom: userProfile.prenom,
-      adresse: userProfile.adresse,
       email: userProfile.email,
       telephone: userProfile.telephone,
-      dateNaissance: userProfile.dateNaissance,
       password: 'password123',
     };
 

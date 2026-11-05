@@ -11,10 +11,8 @@ interface UserSignupRequest {
   login: string;
   nom: string;
   prenom: string;
-  adresse: string;
   email: string;
   telephone: string;
-  dateNaissance: string;
   password: string;
 }
 
@@ -53,10 +51,8 @@ export const create = async (req: Request, res: Response): Promise<void> => {
       login: signup.login.trim(),
       nom: signup.nom.trim(),
       prenom: signup.prenom.trim(),
-      adresse: signup.adresse.trim(),
       email: signup.email.trim().toLowerCase(),
       telephone: signup.telephone.trim(),
-      dateNaissance: signup.dateNaissance,
       passwordHash
     });
 
@@ -129,14 +125,13 @@ function parseSignupRequest(value: unknown): UserSignupRequest | null {
   }
 
   const body = value as Record<string, unknown>;
+  // Liste blanche : les champs personnels supprimés et tout champ inconnu sont ignorés.
   const fields = [
     "login",
     "nom",
     "prenom",
-    "adresse",
     "email",
     "telephone",
-    "dateNaissance",
     "password"
   ] as const;
 
@@ -150,27 +145,20 @@ function parseSignupRequest(value: unknown): UserSignupRequest | null {
     return null;
   }
 
-  const [login, nom, prenom, adresse, email, telephone, dateNaissance, password] =
-    values;
+  const [login, nom, prenom, email, telephone, password] = values;
   const signup: UserSignupRequest = {
     login,
     nom,
     prenom,
-    adresse,
     email,
     telephone,
-    dateNaissance,
     password
   };
-  const birthDate = new Date(`${signup.dateNaissance}T00:00:00.000Z`);
 
   if (
     signup.login.trim().length < 3 ||
     signup.password.length < 8 ||
-    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(signup.email.trim()) ||
-    !/^\d{4}-\d{2}-\d{2}$/.test(signup.dateNaissance) ||
-    Number.isNaN(birthDate.getTime()) ||
-    birthDate.toISOString().slice(0, 10) !== signup.dateNaissance
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(signup.email.trim())
   ) {
     return null;
   }
@@ -245,10 +233,8 @@ function toPublicUser(user: UserInstance) {
     login: user.login,
     nom: user.nom,
     prenom: user.prenom,
-    adresse: user.adresse,
     email: user.email,
-    telephone: user.telephone,
-    dateNaissance: user.dateNaissance
+    telephone: user.telephone
   };
 }
 

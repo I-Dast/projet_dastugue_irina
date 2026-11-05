@@ -31,9 +31,9 @@ describe('Signup', () => {
     expect(component.form.controls.login).toBeDefined();
     expect(component.form.controls.nom).toBeDefined();
     expect(component.form.controls.prenom).toBeDefined();
-    expect(component.form.controls.adresse).toBeDefined();
     expect(component.form.controls.telephone).toBeDefined();
-    expect(component.form.controls.dateNaissance).toBeDefined();
+    expect(fixture.nativeElement.querySelector('#dateNaissance')).toBeNull();
+    expect(fixture.nativeElement.querySelector('#adresse')).toBeNull();
   });
 
   it('requires matching passwords', () => {
@@ -60,10 +60,8 @@ describe('Signup', () => {
       confirmPassword: 'password123',
       nom: 'Lovelace',
       prenom: 'Ada',
-      adresse: '1 rue des Tests',
       email: 'ada@example.com',
       telephone: '+33123456789',
-      dateNaissance: '1815-12-10',
     });
 
     const router = TestBed.inject(Router);
@@ -77,10 +75,8 @@ describe('Signup', () => {
       password: 'password123',
       nom: 'Lovelace',
       prenom: 'Ada',
-      adresse: '1 rue des Tests',
       email: 'ada@example.com',
       telephone: '+33123456789',
-      dateNaissance: '1815-12-10',
     });
     expect(request.request.body.confirmPassword).toBeUndefined();
     request.flush({
@@ -88,10 +84,8 @@ describe('Signup', () => {
       login: 'ada.lovelace',
       nom: 'Lovelace',
       prenom: 'Ada',
-      adresse: '1 rue des Tests',
       email: 'ada@example.com',
       telephone: '+33123456789',
-      dateNaissance: '1815-12-10',
     });
     expect(component.successMessage).toBe('Inscription enregistrée avec succès.');
     expect(navigateSpy).toHaveBeenCalledWith('/pollutions');

@@ -3,14 +3,13 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
+/** Champs effectivement envoyés à l'API ; les données personnelles non nécessaires en sont exclues. */
 export interface SignupRequest {
   login: string;
   nom: string;
   prenom: string;
-  adresse: string;
   email: string;
   telephone: string;
-  dateNaissance: string;
   password: string;
 }
 
@@ -25,10 +24,8 @@ export interface UserProfile {
   login: string;
   nom: string;
   prenom: string;
-  adresse: string;
   email: string;
   telephone: string;
-  dateNaissance: string;
 }
 
 @Injectable({ providedIn: 'root' })

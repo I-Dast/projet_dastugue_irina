@@ -31,10 +31,8 @@ const publicUser = {
   login: 'ada.lovelace',
   nom: 'Lovelace',
   prenom: 'Ada',
-  adresse: '1 rue des Tests',
   email: 'ada@example.com',
-  telephone: '+33123456789',
-  dateNaissance: '1815-12-10'
+  telephone: '+33123456789'
 };
 
 // Restore mocked ORM methods after each test to avoid leaking behavior between cases.
@@ -136,6 +134,38 @@ test('user POST rejects incomplete signup data', async () => {
 
   assert.equal(response.statusCode, 400);
   assert.equal(create.mock.callCount(), 0);
+});
+
+test('user POST stores and returns no address or birth date', async () => {
+  const created = {
+    ...publicUser,
+    passwordHash: 'stored-hash'
+  };
+  const create = mock.method(db.users, 'create', async () => created);
+  const response = createResponse();
+
+  await userController.create(
+    {
+      body: {
+        login: 'ada.lovelace',
+        nom: 'Lovelace',
+        prenom: 'Ada',
+        email: 'ADA@example.com',
+        telephone: '+33123456789',
+        password: 'password123',
+        adresse: 'ancienne adresse à ignorer',
+        dateNaissance: '1815-12-10'
+      }
+    },
+    response
+  );
+
+  assert.equal(response.statusCode, 201);
+  assert.equal(response.body.adresse, undefined);
+  assert.equal(response.body.dateNaissance, undefined);
+  assert.equal(create.mock.calls[0].arguments[0].adresse, undefined);
+  assert.equal(create.mock.calls[0].arguments[0].dateNaissance, undefined);
+  assert.equal(create.mock.calls[0].arguments[0].email, 'ada@example.com');
 });
 
 test('user list excludes the password hash from its Sequelize query', async () => {

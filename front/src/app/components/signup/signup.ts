@@ -20,22 +20,6 @@ const matchingPasswords: ValidatorFn = (
   return password === confirmPassword ? null : { passwordMismatch: true };
 };
 
-function validateBirthDate(control: AbstractControl<string>): ValidationErrors | null {
-  const value = control.value;
-  if (!value) {
-    return null;
-  }
-
-  const today = new Date();
-  const latestDate = [
-    today.getFullYear(),
-    String(today.getMonth() + 1).padStart(2, '0'),
-    String(today.getDate()).padStart(2, '0'),
-  ].join('-');
-
-  return value > latestDate ? { futureDate: true } : null;
-}
-
 @Component({
   imports: [ReactiveFormsModule],
   selector: 'app-signup',
@@ -47,8 +31,8 @@ export class Signup {
   private readonly router = inject(Router);
   private readonly userService = inject(UserService);
 
-  readonly today = this.getLocalDateValue(new Date());
-
+  // Le formulaire ne collecte que les informations nécessaires au compte ;
+  // l’adresse et la date de naissance ne sont pas demandées.
   readonly form = this.formBuilder.nonNullable.group(
     {
       login: [
@@ -77,7 +61,6 @@ export class Signup {
           Validators.pattern(/^(?=.*\p{L})[\p{L} '-]+$/u),
         ],
       ],
-      adresse: ['', [Validators.required, Validators.pattern(/^(?=.*\S).+$/u)]],
       email: ['', [Validators.required, Validators.email]],
       telephone: [
         '',
@@ -86,7 +69,6 @@ export class Signup {
           Validators.pattern(/^(?=(?:\D*\d){8,15}\D*$)\+?[\d\s().-]+$/),
         ],
       ],
-      dateNaissance: ['', [Validators.required, validateBirthDate]],
     },
     { validators: matchingPasswords },
   );
@@ -94,14 +76,6 @@ export class Signup {
   isSubmitting = false;
   successMessage = '';
   errorMessage = '';
-
-  private getLocalDateValue(date: Date): string {
-    return [
-      date.getFullYear(),
-      String(date.getMonth() + 1).padStart(2, '0'),
-      String(date.getDate()).padStart(2, '0'),
-    ].join('-');
-  }
 
   submit(): void {
     if (this.form.invalid || this.isSubmitting) {
@@ -113,6 +87,7 @@ export class Signup {
     this.successMessage = '';
     this.errorMessage = '';
 
+    // La confirmation sert uniquement à valider le formulaire et n'est jamais transmise à l'API.
     const { confirmPassword: _confirmPassword, ...data } =
       this.form.getRawValue();
     const request: SignupRequest = data;

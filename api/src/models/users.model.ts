@@ -1,15 +1,13 @@
 import { DataTypes, Model, ModelStatic, Optional, Sequelize } from "sequelize";
 
-// Ces propriétés correspondent aux informations demandées par le formulaire d'inscription.
+// Seules les données utiles au compte sont modélisées : aucune adresse ni date de naissance n'est conservée.
 export interface UserAttributes {
   id: number;
   login: string;
   nom: string;
   prenom: string;
-  adresse: string;
   email: string;
   telephone: string;
-  dateNaissance: string;
   passwordHash: string;
 }
 
@@ -49,10 +47,6 @@ export default function defineUsers(sequelize: Sequelize): UserModel {
         type: DataTypes.STRING,
         allowNull: false
       },
-      adresse: {
-        type: DataTypes.TEXT,
-        allowNull: false
-      },
       email: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -60,10 +54,6 @@ export default function defineUsers(sequelize: Sequelize): UserModel {
       },
       telephone: {
         type: DataTypes.STRING,
-        allowNull: false
-      },
-      dateNaissance: {
-        type: DataTypes.DATEONLY,
         allowNull: false
       },
       // Seul le hash est conservé en base, jamais le mot de passe reçu en clair.
