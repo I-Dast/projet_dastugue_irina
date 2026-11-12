@@ -92,13 +92,18 @@
         <ul class="pollution-list">
           <!-- track conserve les éléments DOM associés à leur id lorsque la liste change. -->
           @for (pollution of filteredPollutions(); track pollution.id ?? $index) {
-            <li>
+            <li [appHighlightPollution]="pollution.indiceDangerosite">
               <div class="pollution-heading">
                 <h3>{{ pollution.titreDeclarationDePollution }}</h3>
                 <span class="badge">{{ pollution.typePollution }}</span>
               </div>
               <p>{{ pollution.description }}</p>
               <p class="pollution-meta">{{ pollution.lieu }} · {{ pollution.dateObservation }}</p>
+              @if (pollution.indiceDangerosite !== undefined) {
+                <p class="pollution-level">
+                  Indice : {{ pollution.indiceDangerosite }} — {{ pollution.indiceDangerosite | pollutionLevel }}
+                </p>
+              }
               @if (pollution.id !== undefined) {
                 <a class="detail-link" [routerLink]="['/pollutions', pollution.id]">Voir le détail</a>
                 <!-- Étape 5 : suppression protégée par confirmation et exécutée par le composant. -->

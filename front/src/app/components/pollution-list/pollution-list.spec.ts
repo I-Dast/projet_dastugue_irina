@@ -50,6 +50,33 @@ describe('PollutionList', () => {
     httpTesting.verify();
   });
 
+  it('should show and highlight the pollution danger level when an index is available', () => {
+    const fixture = TestBed.createComponent(PollutionList);
+    const httpTesting = TestBed.inject(HttpTestingController);
+
+    fixture.detectChanges();
+    httpTesting.expectOne(endpoint).flush([
+      {
+        id: 1,
+        titreDeclarationDePollution: 'Déchets sur la plage',
+        typePollution: 'Plastique',
+        description: 'Des déchets plastiques sont visibles sur le sable.',
+        dateObservation: '2026-10-21',
+        lieu: 'Plage de test',
+        latitude: 48.1,
+        longitude: -1.7,
+        photoUrl: '',
+        indiceDangerosite: 51,
+      },
+    ]);
+    fixture.detectChanges();
+
+    const item = fixture.nativeElement.querySelector('.pollution-list li');
+    expect(item.textContent).toContain('Indice : 51 — Élevée');
+    expect(item.style.backgroundColor).toBe('orange');
+    httpTesting.verify();
+  });
+
   // La suppression actualise la liste uniquement après la confirmation du serveur.
   it('should delete a pollution after confirmation', () => {
     const fixture = TestBed.createComponent(PollutionList);
