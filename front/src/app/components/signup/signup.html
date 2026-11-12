@@ -35,16 +35,6 @@
         }
       </div>
 
-      <div class="field full-width">
-        <label for="adresse">Adresse</label>
-        <input id="adresse" type="text" formControlName="adresse" autocomplete="street-address"
-          [attr.aria-invalid]="form.controls.adresse.invalid && form.controls.adresse.touched"
-          aria-describedby="adresse-error">
-        @if (form.controls.adresse.touched && form.controls.adresse.hasError('required')) {
-          <p class="field-error" id="adresse-error">L’adresse est obligatoire.</p>
-        }
-      </div>
-
       <div class="field">
         <label for="email">Adresse e-mail</label>
         <input id="email" type="email" formControlName="email" autocomplete="email"
@@ -62,19 +52,6 @@
           aria-describedby="telephone-error">
         @if (form.controls.telephone.touched && form.controls.telephone.invalid) {
           <p class="field-error" id="telephone-error">Saisissez un numéro de téléphone valide.</p>
-        }
-      </div>
-
-      <div class="field full-width">
-        <label for="dateNaissance">Date de naissance</label>
-        <input id="dateNaissance" type="date" formControlName="dateNaissance" autocomplete="bday"
-          [max]="today"
-          [attr.aria-invalid]="form.controls.dateNaissance.invalid && form.controls.dateNaissance.touched"
-          aria-describedby="dateNaissance-error">
-        @if (form.controls.dateNaissance.touched && form.controls.dateNaissance.hasError('required')) {
-          <p class="field-error" id="dateNaissance-error">La date de naissance est obligatoire.</p>
-        } @else if (form.controls.dateNaissance.touched && form.controls.dateNaissance.hasError('futureDate')) {
-          <p class="field-error" id="dateNaissance-error">La date de naissance ne peut pas être dans le futur.</p>
         }
       </div>
 

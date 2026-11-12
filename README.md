@@ -8,11 +8,10 @@ Depuis la racine du dépôt :
 npm run dev
 ```
 
-Ou depuis [`front/`](./front/) : `npm install`, puis `npm run dev`.
-L'application est accessible sur <http://localhost:4200>. En mode de
-développement, ses déclarations sont conservées dans le stockage local du
-navigateur ; PostgreSQL n'est pas nécessaire pour lancer le front.
+Cette commande démarre en même temps l'API Node.js et le front Angular. Le
+front est accessible sur <http://localhost:4200> et l'API sur
+<http://localhost:3000>. L'API doit pouvoir se connecter à PostgreSQL ; vérifiez
+la configuration locale dans [`api/.env`](./api/.env) avant de démarrer.
 
-Les étapes détaillées et les commandes de build sont dans
-[`front/README.md`](./front/README.md). L'API Node.js est documentée dans
-[`api/README.md`](./api/README.md).
+Les journaux des deux services apparaissent dans le même terminal. Arrêtez-les
+ensemble avec `Ctrl+C`. L'API est documentée dans [`api/README.md`](./api/README.md).

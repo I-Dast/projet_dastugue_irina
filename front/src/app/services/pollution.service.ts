@@ -17,9 +17,10 @@ export class PollutionServiceError extends Error {
 @Injectable({ providedIn: 'root' }) // créer un provider au niveau applicatif
 export class PollutionService {
   private readonly http = inject(HttpClient);
-  // L’URL vient de la configuration Angular, ce qui permet de la changer selon l’environnement.
-  // Le replace enlève une éventuelle barre finale afin d’éviter un double « // ».
-  private readonly endpoint = `${environment.apiBaseUrl.replace(/\/$/, '')}/tp3/pollution`;
+  // Le mode mock conserve son ancienne route ; sinon, les appels vont à l'API Node du TP.
+  private readonly endpoint = environment.useMock
+    ? `${environment.apiBaseUrl.replace(/\/$/, '')}/tp3/pollution`
+    : `${environment.apiUrl.replace(/\/$/, '')}/api/pollutions`;
 
   /** Étape initiale : récupère toutes les pollutions enregistrées par l’API. */
   list(): Observable<Pollution[]> {

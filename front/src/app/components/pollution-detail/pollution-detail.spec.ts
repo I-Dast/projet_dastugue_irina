@@ -4,9 +4,12 @@ import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, Router } from '@angular/router';
 import { provideRouter } from '@angular/router';
 import { GeolocationService } from '../../services/geolocation.service';
+import { environment } from '../../../environments/environment';
 import { PollutionDetail } from './pollution-detail';
 
 describe('PollutionDetail', () => {
+  const endpoint = `${environment.apiUrl.replace(/\/$/, '')}/api/pollutions`;
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [PollutionDetail],
@@ -29,7 +32,7 @@ describe('PollutionDetail', () => {
 
     fixture.detectChanges();
 
-    const request = httpTestingController.expectOne('http://localhost:53903/tp3/pollution/1');
+    const request = httpTestingController.expectOne(`${endpoint}/1`);
     expect(request.request.method).toBe('GET');
     request.flush({
       id: 1,
@@ -57,7 +60,7 @@ describe('PollutionDetail', () => {
 
     fixture.detectChanges();
     httpTestingController
-      .expectOne('http://localhost:53903/tp3/pollution/1')
+      .expectOne(`${endpoint}/1`)
       .flush('Not found', { status: 404, statusText: 'Not Found' });
     fixture.detectChanges();
 
@@ -82,7 +85,7 @@ describe('PollutionDetail', () => {
     };
 
     fixture.detectChanges();
-    httpTestingController.expectOne('http://localhost:53903/tp3/pollution/1').flush(pollution);
+    httpTestingController.expectOne(`${endpoint}/1`).flush(pollution);
     fixture.detectChanges();
 
     fixture.nativeElement.querySelector('button').click();
@@ -91,7 +94,7 @@ describe('PollutionDetail', () => {
     component.editForm.patchValue({ titreDeclarationDePollution: 'Pollution modifiée' });
     component.saveChanges();
 
-    const request = httpTestingController.expectOne('http://localhost:53903/tp3/pollution/1');
+    const request = httpTestingController.expectOne(`${endpoint}/1`);
     expect(request.request.method).toBe('PUT');
     expect(request.request.body).toEqual({
       titreDeclarationDePollution: 'Pollution modifiée',
@@ -112,7 +115,7 @@ describe('PollutionDetail', () => {
     httpTestingController.verify();
   });
 
-  // Étape 5 : après confirmation, DELETE réussit et le routeur revient à la liste.
+  // Après confirmation, DELETE réussit et le routeur revient à la liste.
   it('should delete the selected pollution and return to the list after confirmation', () => {
     const fixture = TestBed.createComponent(PollutionDetail);
     const httpTestingController = TestBed.inject(HttpTestingController);
@@ -132,18 +135,18 @@ describe('PollutionDetail', () => {
     };
 
     fixture.detectChanges();
-    httpTestingController.expectOne('http://localhost:53903/tp3/pollution/1').flush(pollution);
+    httpTestingController.expectOne(`${endpoint}/1`).flush(pollution);
     fixture.detectChanges();
 
     fixture.nativeElement.querySelector('.button-danger').click();
-    const request = httpTestingController.expectOne('http://localhost:53903/tp3/pollution/1');
+    const request = httpTestingController.expectOne(`${endpoint}/1`);
     expect(confirmSpy).toHaveBeenCalledWith(
       'Voulez-vous vraiment supprimer la pollution « Déchets sur la plage » ?',
     );
     expect(request.request.method).toBe('DELETE');
     request.flush(null);
 
-    expect(navigateSpy).toHaveBeenCalledWith('/');
+    expect(navigateSpy).toHaveBeenCalledWith('/pollutions');
     httpTestingController.verify();
     confirmSpy.mockRestore();
     navigateSpy.mockRestore();
@@ -159,7 +162,7 @@ describe('PollutionDetail', () => {
       .mockResolvedValue({ latitude: 48.8566, longitude: 2.3522 });
 
     fixture.detectChanges();
-    httpTestingController.expectOne('http://localhost:53903/tp3/pollution/1').flush({
+    httpTestingController.expectOne(`${endpoint}/1`).flush({
       id: 1,
       titreDeclarationDePollution: 'Déchets sur la plage',
       typePollution: 'Plastique',

@@ -9,6 +9,10 @@
   background: #e3efc6;
 }
 
+:where(*) {
+  font-weight: 400;
+}
+
 html,
 body {
   min-height: 100%;
