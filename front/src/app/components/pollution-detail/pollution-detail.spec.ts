@@ -8,7 +8,9 @@ import { environment } from '../../../environments/environment';
 import { PollutionDetail } from './pollution-detail';
 
 describe('PollutionDetail', () => {
-  const endpoint = `${environment.apiUrl.replace(/\/$/, '')}/api/pollutions`;
+  const endpoint = environment.useMock
+    ? `${environment.apiBaseUrl.replace(/\/$/, '')}/tp3/pollution`
+    : `${environment.apiUrl.replace(/\/$/, '')}/api/pollutions`;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({

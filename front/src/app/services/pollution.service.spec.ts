@@ -8,7 +8,9 @@ import { PollutionService } from './pollution.service';
 describe('PollutionService', () => {
   let service: PollutionService;
   let httpTestingController: HttpTestingController;
-  const endpoint = `${environment.apiUrl.replace(/\/$/, '')}/api/pollutions`;
+  const endpoint = environment.useMock
+    ? `${environment.apiBaseUrl.replace(/\/$/, '')}/tp3/pollution`
+    : `${environment.apiUrl.replace(/\/$/, '')}/api/pollutions`;
 
   beforeEach(() => {
     TestBed.configureTestingModule({

@@ -5,6 +5,7 @@ import {
 } from '@angular/common/http';
 import { defer, of, throwError } from 'rxjs';
 import { TYPES_POLLUTION, type Pollution } from '../models/pollution';
+import { POLLUTION_DEMO_DATA } from './pollution-demo.data';
 
 const STORAGE_KEY = 'tp3.mock-backend.pollutions.v1';
 const POLLUTION_ROUTE = /(?:^|\/)tp3\/pollution(?:\/([^/]+))?\/?$/;
@@ -113,7 +114,11 @@ function isPollutionPayload(value: unknown): value is PollutionPayload {
     typeof payload['lieu'] === 'string' &&
     typeof payload['latitude'] === 'number' &&
     typeof payload['longitude'] === 'number' &&
-    typeof payload['photoUrl'] === 'string'
+    typeof payload['photoUrl'] === 'string' &&
+    (payload['indiceDangerosite'] === undefined ||
+      (typeof payload['indiceDangerosite'] === 'number' &&
+        Number.isFinite(payload['indiceDangerosite']) &&
+        payload['indiceDangerosite'] >= 0))
   );
 }
 
@@ -133,7 +138,7 @@ function readPollutions(url: string): Pollution[] {
 
   const saved = localStorage.getItem(STORAGE_KEY);
   if (saved === null) {
-    return [];
+    return POLLUTION_DEMO_DATA.map((pollution) => ({ ...pollution }));
   }
 
   let parsed: unknown;

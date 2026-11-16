@@ -10,7 +10,9 @@ import { GeolocationService } from '../../services/geolocation.service';
 import { PollutionCreate } from './pollution-create';
 
 describe('PollutionCreate', () => {
-  const endpoint = `${environment.apiUrl.replace(/\/$/, '')}/api/pollutions`;
+  const endpoint = environment.useMock
+    ? `${environment.apiBaseUrl.replace(/\/$/, '')}/tp3/pollution`
+    : `${environment.apiUrl.replace(/\/$/, '')}/api/pollutions`;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
