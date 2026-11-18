@@ -6,6 +6,7 @@ import { mockBackendInterceptor } from './mock-backend.interceptor';
 
 describe('mockBackendInterceptor', () => {
   const endpoint = 'http://localhost:53903/tp3/pollution';
+  const storageKey = 'tp3.mock-backend.pollutions.v1';
   const payload = {
     titreDeclarationDePollution: 'Déchets près du canal',
     typePollution: 'Plastique' as const,
@@ -18,17 +19,18 @@ describe('mockBackendInterceptor', () => {
   };
 
   beforeEach(() => {
-    localStorage.removeItem('tp3.mock-backend.pollutions.v1');
+    localStorage.removeItem(storageKey);
     TestBed.configureTestingModule({
       providers: [provideHttpClient(withInterceptors([mockBackendInterceptor]))],
     });
   });
 
   afterEach(() => {
-    localStorage.removeItem('tp3.mock-backend.pollutions.v1');
+    localStorage.removeItem(storageKey);
   });
 
   it('handles create, list, update, and delete requests', async () => {
+    localStorage.setItem(storageKey, '[]');
     const http = TestBed.inject(HttpClient);
     const created = await firstValueFrom(http.post<typeof payload & { id: number }>(endpoint, payload));
 
@@ -51,5 +53,32 @@ describe('mockBackendInterceptor', () => {
     await expect(firstValueFrom(http.get(`${endpoint}/42`))).rejects.toMatchObject({
       status: 404,
     });
+  });
+
+  it('accepts and persists a pollution without a danger index', async () => {
+    localStorage.setItem(storageKey, '[]');
+    const http = TestBed.inject(HttpClient);
+    const pollution = { ...payload, indiceDangerosite: null };
+
+    const created = await firstValueFrom(
+      http.post<typeof pollution & { id: number }>(endpoint, pollution),
+    );
+
+    expect(created).toEqual({ ...pollution, id: 1 });
+    expect(await firstValueFrom(http.get<typeof created[]>(endpoint))).toEqual([created]);
+  });
+
+  it('starts with demo pollutions covering every danger level', async () => {
+    const http = TestBed.inject(HttpClient);
+    const pollutions = await firstValueFrom(
+      http.get<Array<{ indiceDangerosite?: number }>>(endpoint),
+    );
+
+    expect(pollutions.map(({ indiceDangerosite }) => indiceDangerosite)).toEqual([
+      10,
+      35,
+      75,
+      120,
+    ]);
   });
 });

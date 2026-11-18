@@ -12,6 +12,25 @@
         <h2 id="recap-title">Pollution déclarée</h2>
         <p>Voici le récapitulatif des informations enregistrées.</p>
       </div>
+      <div class="recap-classifications">
+        <span class="badge">{{ pollution().typePollution }}</span>
+        <span
+          class="danger-level-badge"
+          [class.danger-level-badge--dangerous]="
+            pollution().indiceDangerosite !== null &&
+            pollution().indiceDangerosite !== undefined &&
+            (pollution().indiceDangerosite ?? 0) > 100
+          "
+          [appHighlightPollution]="pollution().indiceDangerosite ?? undefined"
+          aria-label="Niveau de dangerosité"
+        >
+          @if (pollution().indiceDangerosite !== undefined && pollution().indiceDangerosite !== null) {
+            {{ pollution().indiceDangerosite }} — {{ pollution().indiceDangerosite | pollutionLevel }}
+          } @else {
+            Non renseigné
+          }
+        </span>
+      </div>
       <!-- output close informe le parent que l’utilisateur souhaite fermer le récapitulatif. -->
       <button class="close-button" type="button" aria-label="Fermer le récapitulatif" (click)="close.emit()">
         ×
@@ -23,10 +42,6 @@
       <div class="recap-item recap-item--full">
         <dt>Titre de la pollution</dt>
         <dd>{{ pollution().titreDeclarationDePollution }}</dd>
-      </div>
-      <div class="recap-item">
-        <dt>Type de pollution</dt>
-        <dd>{{ pollution().typePollution }}</dd>
       </div>
       <div class="recap-item">
         <dt>Date de l’observation</dt>

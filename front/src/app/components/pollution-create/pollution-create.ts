@@ -4,12 +4,20 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { PollutionRecap } from '../pollution-recap/pollution-recap';
+import { HighlightPollutionDirective } from '../../directives/highlight-pollution.directive';
 import { Pollution, TypePollution, TYPES_POLLUTION } from '../../models/pollution';
+import { PollutionLevelPipe } from '../../pipes/pollution-level.pipe';
 import { GeolocationService } from '../../services/geolocation.service';
 import { PollutionService } from '../../services/pollution.service';
 
 @Component({
-  imports: [PollutionRecap, ReactiveFormsModule, RouterLink],
+  imports: [
+    HighlightPollutionDirective,
+    PollutionLevelPipe,
+    PollutionRecap,
+    ReactiveFormsModule,
+    RouterLink,
+  ],
   selector: 'app-pollution-create',
   styleUrl: './pollution-create.css',
   templateUrl: './pollution-create.html',
@@ -30,6 +38,7 @@ export class PollutionCreate {
     latitude: [0, [Validators.required, Validators.min(-90), Validators.max(90)]],
     longitude: [0, [Validators.required, Validators.min(-180), Validators.max(180)]],
     photoUrl: [''],
+    indiceDangerosite: this.formBuilder.control<number | null>(null, Validators.min(0)),
   });
 
   isSaving = false;
@@ -37,6 +46,12 @@ export class PollutionCreate {
   errorMessage = '';
   locationErrorMessage = '';
   readonly recapPollution = signal<Pollution | null>(null);
+
+  updateDangerIndex(event: Event): void {
+    if (event.target instanceof HTMLInputElement) {
+      this.pollutionForm.controls.indiceDangerosite.setValue(event.target.valueAsNumber);
+    }
+  }
 
   // Remplit les coordonnées avec la position autorisée par le navigateur.
   async locateDevice(): Promise<void> {

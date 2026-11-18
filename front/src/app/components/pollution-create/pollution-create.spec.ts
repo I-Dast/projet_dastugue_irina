@@ -10,7 +10,9 @@ import { GeolocationService } from '../../services/geolocation.service';
 import { PollutionCreate } from './pollution-create';
 
 describe('PollutionCreate', () => {
-  const endpoint = `${environment.apiUrl.replace(/\/$/, '')}/api/pollutions`;
+  const endpoint = environment.useMock
+    ? `${environment.apiBaseUrl.replace(/\/$/, '')}/tp3/pollution`
+    : `${environment.apiUrl.replace(/\/$/, '')}/api/pollutions`;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -36,6 +38,7 @@ describe('PollutionCreate', () => {
       latitude: 48.1,
       longitude: -1.7,
       photoUrl: '',
+      indiceDangerosite: 35,
     };
     const { id: _id, ...payload } = pollution;
 
@@ -50,9 +53,24 @@ describe('PollutionCreate', () => {
 
     expect(component.recapPollution()).toEqual(pollution);
     expect(fixture.nativeElement.textContent).toContain('Déchets sur la plage');
+    expect(fixture.nativeElement.textContent).toContain('35 — Modérée');
     fixture.nativeElement.querySelector('.dismiss-button').click();
     expect(navigateSpy).toHaveBeenCalledWith('/pollutions');
     httpTesting.verify();
+  });
+
+  it('previews the danger level while entering its index', () => {
+    const fixture = TestBed.createComponent(PollutionCreate);
+
+    const slider = fixture.nativeElement.querySelector(
+      '#indiceDangerosite',
+    ) as HTMLInputElement;
+    slider.value = '75';
+    slider.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.pollutionForm.controls.indiceDangerosite.value).toBe(75);
+    expect(fixture.nativeElement.textContent).toContain('75 / 100 — Élevée');
   });
 
   it('does not send an incomplete pollution', () => {

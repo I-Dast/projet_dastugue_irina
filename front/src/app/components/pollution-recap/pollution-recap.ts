@@ -1,7 +1,10 @@
 import { Component, input, output } from '@angular/core';
+import { HighlightPollutionDirective } from '../../directives/highlight-pollution.directive';
 import { Pollution } from '../../models/pollution';
+import { PollutionLevelPipe } from '../../pipes/pollution-level.pipe';
 
 @Component({
+  imports: [HighlightPollutionDirective, PollutionLevelPipe],
   // Le clic sur le fond ferme la fenêtre ; le clic dans le dialogue est intercepté par le template.
   host: {
     '(click)': 'close.emit()',

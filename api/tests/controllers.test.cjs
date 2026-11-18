@@ -73,15 +73,29 @@ test('pollution POST rejects an invalid payload without writing to the database'
 });
 
 test('pollution POST creates a valid declaration and returns 201', async () => {
-  const created = { id: 4, ...pollutionPayload };
+  const payload = { ...pollutionPayload, indiceDangerosite: 51 };
+  const created = { id: 4, ...payload };
   const create = mock.method(db.pollutions, 'create', async () => created);
   const response = createResponse();
 
-  await pollutionController.create({ body: pollutionPayload }, response);
+  await pollutionController.create({ body: payload }, response);
 
   assert.equal(response.statusCode, 201);
   assert.deepEqual(response.body, created);
-  assert.deepEqual(create.mock.calls[0].arguments[0], pollutionPayload);
+  assert.deepEqual(create.mock.calls[0].arguments[0], payload);
+});
+
+test('pollution POST rejects a negative danger index', async () => {
+  const create = mock.method(db.pollutions, 'create');
+  const response = createResponse();
+
+  await pollutionController.create(
+    { body: { ...pollutionPayload, indiceDangerosite: -1 } },
+    response
+  );
+
+  assert.equal(response.statusCode, 400);
+  assert.equal(create.mock.callCount(), 0);
 });
 
 test('pollution detail rejects a malformed id before querying Sequelize', async () => {

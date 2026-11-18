@@ -35,6 +35,12 @@
   margin-bottom: 1.5rem;
 }
 
+.detail-classifications {
+  display: grid;
+  justify-items: end;
+  gap: 0.5rem;
+}
+
 .eyebrow {
   margin: 0 0 0.5rem;
   color: #4b5563;
@@ -247,6 +253,10 @@ button:disabled {
 
   .detail-grid {
     grid-template-columns: 1fr;
+  }
+
+  .detail-classifications {
+    justify-items: start;
   }
 
   .field-row {

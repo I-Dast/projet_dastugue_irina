@@ -51,6 +51,39 @@
         }
       </div>
 
+      <div class="field">
+        <label for="indiceDangerosite">Indice de dangerosité (facultatif)</label>
+        <input
+          id="indiceDangerosite"
+          class="danger-index-slider"
+          type="range"
+          min="0"
+          max="100"
+          step="1"
+          [value]="pollutionForm.controls.indiceDangerosite.value ?? 0"
+          (input)="updateDangerIndex($event)"
+          aria-describedby="indiceDangerosite-value"
+        >
+        <output
+          id="indiceDangerosite-value"
+          class="danger-level-badge"
+          [class.danger-level-badge--dangerous]="
+            pollutionForm.controls.indiceDangerosite.value !== null &&
+            pollutionForm.controls.indiceDangerosite.value > 100
+          "
+          [appHighlightPollution]="pollutionForm.controls.indiceDangerosite.value ?? undefined"
+          for="indiceDangerosite"
+        >
+          @if (pollutionForm.controls.indiceDangerosite.value !== null) {
+            {{ pollutionForm.controls.indiceDangerosite.value }} / 100 —
+            {{ pollutionForm.controls.indiceDangerosite.value | pollutionLevel }}
+          } @else {
+            Non renseigné — déplacez le curseur pour choisir
+          }
+        </output>
+        <small>Faible : 0–20 · Modérée : 21–50 · Élevée : 51–100</small>
+      </div>
+
       <div class="field-row">
         <div class="field">
           <label for="dateObservation">Date de l’observation</label>

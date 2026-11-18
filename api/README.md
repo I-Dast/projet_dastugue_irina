@@ -26,6 +26,16 @@ pgAdmin, actualiser **Schemas > public > Tables** pour voir la table.
 - `http://localhost:3000/api/pollutions/1` : mesure d'identifiant 1
 - `http://localhost:3000/health` : état de l'API
 
+## Indice de dangerosité
+
+L'indice est facultatif et permet à l'interface d'afficher le niveau associé.
+Pour une base existante, ajouter la colonne avant de relancer l'API :
+
+```sql
+ALTER TABLE pollutions
+ADD COLUMN IF NOT EXISTS "indiceDangerosite" DOUBLE PRECISION;
+```
+
 La connexion locale utilise `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`,
 `DB_PASSWORD` et `DB_SSL`. Pour une base distante, `DATABASE_URL` peut remplacer
 ces paramètres. Ne pas versionner le fichier `.env`.

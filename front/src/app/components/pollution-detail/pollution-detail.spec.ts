@@ -8,7 +8,9 @@ import { environment } from '../../../environments/environment';
 import { PollutionDetail } from './pollution-detail';
 
 describe('PollutionDetail', () => {
-  const endpoint = `${environment.apiUrl.replace(/\/$/, '')}/api/pollutions`;
+  const endpoint = environment.useMock
+    ? `${environment.apiBaseUrl.replace(/\/$/, '')}/tp3/pollution`
+    : `${environment.apiUrl.replace(/\/$/, '')}/api/pollutions`;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -44,12 +46,19 @@ describe('PollutionDetail', () => {
       latitude: 48.1,
       longitude: -1.7,
       photoUrl: '',
+      indiceDangerosite: 75,
     });
     fixture.detectChanges();
 
     expect(fixture.nativeElement.textContent).toContain('Déchets sur la plage');
     expect(fixture.nativeElement.textContent).toContain('21/10/2026');
     expect(fixture.nativeElement.textContent).toContain('Plage de test');
+    expect(fixture.nativeElement.textContent).toContain('75 — Élevée');
+    const levelBadge = fixture.nativeElement.querySelector(
+      '.detail-classifications .danger-level-badge',
+    ) as HTMLElement;
+    expect(levelBadge.textContent).toContain('Élevée');
+    expect(levelBadge.style.backgroundColor).toBe('orange');
     httpTestingController.verify();
   });
 
@@ -82,6 +91,7 @@ describe('PollutionDetail', () => {
       latitude: 48.1,
       longitude: -1.7,
       photoUrl: '',
+      indiceDangerosite: 51,
     };
 
     fixture.detectChanges();
@@ -105,6 +115,7 @@ describe('PollutionDetail', () => {
       latitude: pollution.latitude,
       longitude: pollution.longitude,
       photoUrl: pollution.photoUrl,
+      indiceDangerosite: pollution.indiceDangerosite,
     });
     request.flush({ ...pollution, titreDeclarationDePollution: 'Pollution modifiée' });
     fixture.detectChanges();

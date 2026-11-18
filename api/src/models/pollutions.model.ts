@@ -11,6 +11,7 @@ export interface PollutionAttributes {
   latitude: number;
   longitude: number;
   photoUrl: string;
+  indiceDangerosite?: number | null;
 }
 
 // L'identifiant est généré par PostgreSQL lors de la création d'une déclaration.
@@ -68,6 +69,10 @@ export default function definePollutions(sequelize: Sequelize): PollutionModel {
       photoUrl: {
         type: DataTypes.TEXT,
         allowNull: false
+      },
+      indiceDangerosite: {
+        type: DataTypes.DOUBLE,
+        allowNull: true
       }
     },
     {

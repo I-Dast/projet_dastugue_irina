@@ -73,3 +73,64 @@ body {
     opacity: 0.2;
   }
 }
+
+.danger-index-slider {
+  min-height: 36px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  cursor: pointer;
+  appearance: none;
+}
+
+.danger-index-slider:focus {
+  outline: 3px solid rgb(84 123 88 / 28%);
+  outline-offset: 3px;
+}
+
+.danger-index-slider::-webkit-slider-runnable-track {
+  height: 12px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #40a85f 0%, #b4cf45 25%, #f1cf46 50%, #ef9638 75%, #d94a40 100%);
+}
+
+.danger-index-slider::-moz-range-track {
+  height: 12px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #40a85f 0%, #b4cf45 25%, #f1cf46 50%, #ef9638 75%, #d94a40 100%);
+}
+
+.danger-index-slider::-webkit-slider-thumb {
+  width: 24px;
+  height: 24px;
+  margin-top: -6px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: #273444;
+  box-shadow: 0 1px 5px rgb(24 32 51 / 45%);
+  appearance: none;
+}
+
+.danger-index-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: #273444;
+  box-shadow: 0 1px 5px rgb(24 32 51 / 45%);
+}
+
+.danger-level-badge {
+  display: inline-block;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  color: #273444;
+  background: #edf3d5;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.danger-level-badge--dangerous {
+  color: #fff;
+}
