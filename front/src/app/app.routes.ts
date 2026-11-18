@@ -2,11 +2,13 @@ import { Routes } from '@angular/router';
 import { PollutionDetail } from './components/pollution-detail/pollution-detail';
 import { PollutionCreate } from './components/pollution-create/pollution-create';
 import { PollutionList } from './components/pollution-list/pollution-list';
+import { Login } from './components/login/login';
 import { Signup } from './components/signup/signup';
 
 export const routes: Routes = [
   // L'inscription est l'accueil ; après création du compte, l'utilisateur arrive à la liste.
   { path: '', component: Signup },
+  { path: 'login', component: Login },
   { path: 'pollutions', component: PollutionList },
   { path: 'pollutions/new', component: PollutionCreate },
   // Étapes 4 et 5 : accès au détail par identifiant pour modifier ou supprimer.

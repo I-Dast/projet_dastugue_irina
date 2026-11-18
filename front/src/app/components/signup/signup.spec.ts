@@ -53,6 +53,19 @@ describe('Signup', () => {
     expect(component.isSubmitting).toBe(false);
   });
 
+  it('navigates to the login page from the existing-account button', () => {
+    const router = TestBed.inject(Router);
+    const navigateSpy = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
+    const button = fixture.nativeElement.querySelector(
+      '.existing-account-button',
+    ) as HTMLButtonElement;
+
+    expect(button.textContent.trim()).toBe("J'ai déjà un compte");
+    button.click();
+
+    expect(navigateSpy).toHaveBeenCalledWith('/login');
+  });
+
   it('submits the user details without the confirmation field', () => {
     component.form.setValue({
       login: 'ada.lovelace',
