@@ -3,6 +3,7 @@ import express, { Application, Request, Response } from "express";
 import cors, { CorsOptions } from "cors";
 import db from "./models";
 import initRoutes from "./routes";
+import userController from "./controllers/user.controllers";
 
 const app: Application = express();
 
@@ -42,6 +43,10 @@ const start = async (): Promise<void> => {
     await db.sequelize.query(
       'ALTER TABLE "users" DROP COLUMN IF EXISTS "adresse", DROP COLUMN IF EXISTS "dateNaissance"'
     );
+    await db.sequelize.query(
+      'ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "isAdmin" BOOLEAN NOT NULL DEFAULT FALSE'
+    );
+    await userController.ensureAdminAccount();
     console.log("Connexion PostgreSQL établie; tables des modèles synchronisées.");
 
     const count = await db.pollutions.count();
@@ -88,7 +93,7 @@ const start = async (): Promise<void> => {
       console.log(`API disponible sur http://${host}:${port}.`);
     });
   } catch (err: unknown) {
-    console.error("Impossible de démarrer l'API avec PostgreSQL :", err);
+    console.error("Impossible de démarrer l'API :", err);
     process.exitCode = 1;
   }
 };

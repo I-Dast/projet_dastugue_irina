@@ -1,14 +1,14 @@
 import { Application, Router } from "express";
 import userController from "../controllers/user.controllers";
+import requireAdmin from "../middleware/require-admin";
 
 // Expose la création de comptes à l'adresse demandée par le sujet.
 export default (app: Application): void => {
   const router = Router();
 
-  // GET renvoie la liste publique ; POST crée un compte.
-  router.get("/", userController.getAll);
+  // La création est publique ; consulter et supprimer les comptes est réservé à l'administration.
+  router.get("/", requireAdmin, userController.getAll);
   router.post("/", userController.create);
-  // DELETE supprime le compte identifié dans l'URL.
-  router.delete("/:id", userController.remove);
+  router.delete("/:id", requireAdmin, userController.remove);
   app.use("/api/users", router);
 };

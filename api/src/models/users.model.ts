@@ -9,11 +9,12 @@ export interface UserAttributes {
   email: string;
   telephone: string;
   passwordHash: string;
+  isAdmin: boolean;
 }
 
 // L'identifiant est attribué par PostgreSQL et le hash est calculé par le contrôleur.
 export interface UserCreationAttributes
-  extends Optional<UserAttributes, "id"> {}
+  extends Optional<UserAttributes, "id" | "isAdmin"> {}
 
 // Cette instance représente un utilisateur lu ou créé avec Sequelize.
 export interface UserInstance
@@ -60,6 +61,11 @@ export default function defineUsers(sequelize: Sequelize): UserModel {
       passwordHash: {
         type: DataTypes.TEXT,
         allowNull: false
+      },
+      isAdmin: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
       }
     },
     {

@@ -4,11 +4,14 @@ import { PollutionCreate } from './components/pollution-create/pollution-create'
 import { PollutionList } from './components/pollution-list/pollution-list';
 import { Login } from './components/login/login';
 import { Signup } from './components/signup/signup';
+import { AdminUsers } from './components/admin-users/admin-users';
+import { adminGuard } from './guards/admin.guard';
 
 export const routes: Routes = [
   // L'inscription est l'accueil ; après création du compte, l'utilisateur arrive à la liste.
   { path: '', component: Signup },
   { path: 'login', component: Login },
+  { path: 'admin/users', component: AdminUsers, canActivate: [adminGuard] },
   { path: 'pollutions', component: PollutionList },
   { path: 'pollutions/new', component: PollutionCreate },
   // Étapes 4 et 5 : accès au détail par identifiant pour modifier ou supprimer.

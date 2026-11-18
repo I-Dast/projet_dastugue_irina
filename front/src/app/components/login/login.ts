@@ -42,7 +42,18 @@ export class Login {
       .authenticate(credentials)
       .pipe(finalize(() => (this.isSubmitting = false)))
       .subscribe({
-        next: () => {
+        next: (user) => {
+          if (user.isAdmin && !user.accessToken) {
+            this.errorMessage = 'La connexion administrateur a échoué.';
+            return;
+          }
+
+          this.userService.startSession(user);
+          if (user.isAdmin) {
+            void this.router.navigateByUrl('/admin/users');
+            return;
+          }
+
           void this.router.navigateByUrl('/pollutions');
         },
         error: (error: unknown) => {
