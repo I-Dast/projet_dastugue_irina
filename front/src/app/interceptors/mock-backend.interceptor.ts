@@ -116,6 +116,7 @@ function isPollutionPayload(value: unknown): value is PollutionPayload {
     typeof payload['longitude'] === 'number' &&
     typeof payload['photoUrl'] === 'string' &&
     (payload['indiceDangerosite'] === undefined ||
+      payload['indiceDangerosite'] === null ||
       (typeof payload['indiceDangerosite'] === 'number' &&
         Number.isFinite(payload['indiceDangerosite']) &&
         payload['indiceDangerosite'] >= 0))

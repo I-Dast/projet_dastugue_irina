@@ -31,5 +31,5 @@ export interface Pollution {
   /** URL facultative de la photo associée à la déclaration. */
   photoUrl: string;
   /** Indice numérique facultatif utilisé pour afficher le niveau de dangerosité. */
-  indiceDangerosite?: number;
+  indiceDangerosite?: number | null;
 }

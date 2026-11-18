@@ -15,7 +15,7 @@ describe('PollutionLevelPipe', () => {
     expect(pipe.transform(indice)).toBe(expected);
   });
 
-  it.each([undefined, -1, Number.NaN, Number.POSITIVE_INFINITY])(
+  it.each([undefined, null, -1, Number.NaN, Number.POSITIVE_INFINITY])(
     'should report an unavailable level for invalid index %s',
     (indice) => {
       expect(pipe.transform(indice)).toBe('Inconnu');

@@ -22,6 +22,7 @@ interface PollutionCreateRequest {
   latitude: number;
   longitude: number;
   photoUrl: string;
+  indiceDangerosite?: number | null;
 }
 
 /**
@@ -132,6 +133,7 @@ function parsePollutionRequest(
   const latitude = body.latitude;
   const longitude = body.longitude;
   const photoUrl = body.photoUrl;
+  const indiceDangerosite = body.indiceDangerosite;
 
   if (
     !isNonEmptyString(title) ||
@@ -144,6 +146,19 @@ function parsePollutionRequest(
     return {
       valid: false,
       message: "Le titre, le type, la description, la date et le lieu sont obligatoires."
+    };
+  }
+
+  if (
+    indiceDangerosite !== undefined &&
+    indiceDangerosite !== null &&
+    (typeof indiceDangerosite !== "number" ||
+      !Number.isFinite(indiceDangerosite) ||
+      indiceDangerosite < 0)
+  ) {
+    return {
+      valid: false,
+      message: "L'indice de dangerosité doit être un nombre positif ou nul."
     };
   }
 
@@ -186,7 +201,8 @@ function parsePollutionRequest(
       lieu: place.trim(),
       latitude,
       longitude,
-      photoUrl: photoUrl.trim()
+      photoUrl: photoUrl.trim(),
+      ...(indiceDangerosite === undefined ? {} : { indiceDangerosite })
     }
   };
 }

@@ -5,8 +5,8 @@ import { Pipe, PipeTransform } from '@angular/core';
   standalone: true,
 })
 export class PollutionLevelPipe implements PipeTransform {
-  transform(indice: number | undefined): string {
-    if (indice === undefined || !Number.isFinite(indice) || indice < 0) {
+  transform(indice: number | null | undefined): string {
+    if (indice === undefined || indice === null || !Number.isFinite(indice) || indice < 0) {
       return 'Inconnu';
     }
 

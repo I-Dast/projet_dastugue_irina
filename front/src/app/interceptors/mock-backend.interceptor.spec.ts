@@ -55,6 +55,19 @@ describe('mockBackendInterceptor', () => {
     });
   });
 
+  it('accepts and persists a pollution without a danger index', async () => {
+    localStorage.setItem(storageKey, '[]');
+    const http = TestBed.inject(HttpClient);
+    const pollution = { ...payload, indiceDangerosite: null };
+
+    const created = await firstValueFrom(
+      http.post<typeof pollution & { id: number }>(endpoint, pollution),
+    );
+
+    expect(created).toEqual({ ...pollution, id: 1 });
+    expect(await firstValueFrom(http.get<typeof created[]>(endpoint))).toEqual([created]);
+  });
+
   it('starts with demo pollutions covering every danger level', async () => {
     const http = TestBed.inject(HttpClient);
     const pollutions = await firstValueFrom(

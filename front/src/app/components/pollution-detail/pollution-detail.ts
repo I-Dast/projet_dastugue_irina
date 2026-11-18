@@ -1,12 +1,14 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { HighlightPollutionDirective } from '../../directives/highlight-pollution.directive';
 import { Pollution, TypePollution, TYPES_POLLUTION } from '../../models/pollution';
+import { PollutionLevelPipe } from '../../pipes/pollution-level.pipe';
 import { GeolocationService } from '../../services/geolocation.service';
 import { PollutionService } from '../../services/pollution.service';
 
 @Component({
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [HighlightPollutionDirective, PollutionLevelPipe, ReactiveFormsModule, RouterLink],
   selector: 'app-pollution-detail',
   styleUrl: './pollution-detail.css',
   templateUrl: './pollution-detail.html',
@@ -44,7 +46,14 @@ export class PollutionDetail implements OnInit {
     latitude: [0, [Validators.required, Validators.min(-90), Validators.max(90)]],
     longitude: [0, [Validators.required, Validators.min(-180), Validators.max(180)]],
     photoUrl: [''],
+    indiceDangerosite: this.formBuilder.control<number | null>(null, Validators.min(0)),
   });
+
+  updateDangerIndex(event: Event): void {
+    if (event.target instanceof HTMLInputElement) {
+      this.editForm.controls.indiceDangerosite.setValue(event.target.valueAsNumber);
+    }
+  }
 
   ngOnInit(): void {
     // Lit l’identifiant depuis /pollutions/:id, puis charge l’enregistrement correspondant.
@@ -89,6 +98,7 @@ export class PollutionDetail implements OnInit {
       latitude: pollution.latitude,
       longitude: pollution.longitude,
       photoUrl: pollution.photoUrl,
+      indiceDangerosite: pollution.indiceDangerosite ?? null,
     });
     this.saveErrorMessage.set('');
     this.saveSuccessMessage.set('');

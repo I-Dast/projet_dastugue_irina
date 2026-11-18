@@ -15,7 +15,25 @@
           <p class="eyebrow">Détail d’une pollution</p>
           <h1>{{ item.titreDeclarationDePollution }}</h1>
         </div>
-        <span class="badge">{{ item.typePollution }}</span>
+        <div class="detail-classifications">
+          <span class="badge">{{ item.typePollution }}</span>
+          <span
+            class="danger-level-badge"
+            [class.danger-level-badge--dangerous]="
+              item.indiceDangerosite !== null &&
+              item.indiceDangerosite !== undefined &&
+              item.indiceDangerosite > 100
+            "
+            [appHighlightPollution]="item.indiceDangerosite ?? undefined"
+            aria-label="Niveau de dangerosité"
+          >
+            @if (item.indiceDangerosite !== null && item.indiceDangerosite !== undefined) {
+              {{ item.indiceDangerosite | pollutionLevel }}
+            } @else {
+              Non renseigné
+            }
+          </span>
+        </div>
       </header>
 
       <!-- Étapes 4 et 5 : actions disponibles hors du formulaire d’édition. -->
@@ -83,6 +101,39 @@
                         editForm.controls.description.hasError('maxlength')) {
               <small class="field-error">La description ne peut pas dépasser 500 caractères.</small>
             }
+          </div>
+
+          <div class="field">
+            <label for="edit-indiceDangerosite">Indice de dangerosité (facultatif)</label>
+            <input
+              id="edit-indiceDangerosite"
+              class="danger-index-slider"
+              type="range"
+              min="0"
+              max="100"
+              step="1"
+              [value]="editForm.controls.indiceDangerosite.value ?? 0"
+              (input)="updateDangerIndex($event)"
+              aria-describedby="edit-indiceDangerosite-value"
+            >
+            <output
+              id="edit-indiceDangerosite-value"
+              class="danger-level-badge"
+              [class.danger-level-badge--dangerous]="
+                editForm.controls.indiceDangerosite.value !== null &&
+                editForm.controls.indiceDangerosite.value > 100
+              "
+              [appHighlightPollution]="editForm.controls.indiceDangerosite.value ?? undefined"
+              for="edit-indiceDangerosite"
+            >
+              @if (editForm.controls.indiceDangerosite.value !== null) {
+                {{ editForm.controls.indiceDangerosite.value }} / 100 —
+                {{ editForm.controls.indiceDangerosite.value | pollutionLevel }}
+              } @else {
+                Non renseigné — déplacez le curseur pour choisir
+              }
+            </output>
+            <small>Faible : 0–20 · Modérée : 21–50 · Élevée : 51–100</small>
           </div>
 
           <div class="field-row">
@@ -164,6 +215,16 @@
         <div class="detail-item">
           <dt>Longitude</dt>
           <dd>{{ item.longitude }}</dd>
+        </div>
+        <div class="detail-item">
+          <dt>Indice de dangerosité</dt>
+          <dd>
+            @if (item.indiceDangerosite !== undefined && item.indiceDangerosite !== null) {
+              {{ item.indiceDangerosite }} — {{ item.indiceDangerosite | pollutionLevel }}
+            } @else {
+              Non renseigné
+            }
+          </dd>
         </div>
       </dl>
 
