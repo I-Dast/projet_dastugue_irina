@@ -77,6 +77,10 @@ export class Signup {
   successMessage = '';
   errorMessage = '';
 
+  goToLogin(): void {
+    void this.router.navigateByUrl('/login');
+  }
+
   submit(): void {
     if (this.form.invalid || this.isSubmitting) {
       this.form.markAllAsTouched();

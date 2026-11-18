@@ -104,6 +104,14 @@ button:hover:not(:disabled) {
   transform: translateY(-1px);
 }
 
+.existing-account-button {
+  background: #315f1b;
+}
+
+.existing-account-button:hover:not(:disabled) {
+  background: #254b15;
+}
+
 button:focus-visible {
   outline: 3px solid #20321b;
   outline-offset: 3px;

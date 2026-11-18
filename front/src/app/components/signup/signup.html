@@ -80,6 +80,9 @@
       <button type="submit" [disabled]="form.invalid || isSubmitting">
         {{ isSubmitting ? 'Inscription en cours…' : 'Créer mon compte' }}
       </button>
+      <button class="existing-account-button" type="button" (click)="goToLogin()">
+        J'ai déjà un compte
+      </button>
 
       @if (successMessage) {
         <p class="feedback success" role="status">{{ successMessage }}</p>

@@ -1,0 +1,41 @@
+<main class="page">
+  <section class="login-card" aria-labelledby="login-title">
+    <p class="eyebrow">Bienvenue</p>
+    <h1 id="login-title">Connexion</h1>
+    <p class="intro">Connectez-vous avec votre identifiant et votre mot de passe.</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="field">
+        <label for="login">Identifiant</label>
+        <input id="login" type="text" formControlName="login" autocomplete="username"
+          [attr.aria-invalid]="form.controls.login.invalid && form.controls.login.touched"
+          aria-describedby="login-error">
+        @if (form.controls.login.touched && form.controls.login.invalid) {
+          <p class="field-error" id="login-error">Saisissez votre identifiant.</p>
+        }
+      </div>
+
+      <div class="field">
+        <label for="password">Mot de passe</label>
+        <input id="password" type="password" formControlName="password" autocomplete="current-password"
+          [attr.aria-invalid]="form.controls.password.invalid && form.controls.password.touched"
+          aria-describedby="password-error">
+        @if (form.controls.password.touched && form.controls.password.invalid) {
+          <p class="field-error" id="password-error">Saisissez votre mot de passe.</p>
+        }
+      </div>
+
+      <button type="submit" [disabled]="form.invalid || isSubmitting">
+        {{ isSubmitting ? 'Connexion en cours…' : 'Me connecter' }}
+      </button>
+
+      @if (errorMessage) {
+        <p class="feedback error" role="alert">{{ errorMessage }}</p>
+      }
+
+      <button class="signup-button" type="button" (click)="goToSignup()">
+        Créer un compte
+      </button>
+    </form>
+  </section>
+</main>
