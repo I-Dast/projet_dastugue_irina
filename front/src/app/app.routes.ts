@@ -1,21 +1,32 @@
 import { Routes } from '@angular/router';
-import { PollutionDetail } from './components/pollution-detail/pollution-detail';
-import { PollutionCreate } from './components/pollution-create/pollution-create';
-import { PollutionList } from './components/pollution-list/pollution-list';
-import { Login } from './components/login/login';
-import { Signup } from './components/signup/signup';
-import { AdminUsers } from './components/admin-users/admin-users';
+import { authGuard } from './guards/auth.guard';
 import { adminGuard } from './guards/admin.guard';
 
 export const routes: Routes = [
-  // L'inscription est l'accueil ; après création du compte, l'utilisateur arrive à la liste.
-  { path: '', component: Signup },
-  { path: 'login', component: Login },
-  { path: 'admin/users', component: AdminUsers, canActivate: [adminGuard] },
-  { path: 'pollutions', component: PollutionList },
-  { path: 'pollutions/new', component: PollutionCreate },
+  // Les composants d'écran sont chargés seulement quand leur route est visitée.
+  { path: '', loadComponent: () => import('./components/signup/signup').then((m) => m.Signup) },
+  { path: 'login', loadComponent: () => import('./components/login/login').then((m) => m.Login) },
+  {
+    path: 'admin/users',
+    loadComponent: () => import('./components/admin-users/admin-users').then((m) => m.AdminUsers),
+    canActivate: [adminGuard],
+  },
+  {
+    path: 'pollutions',
+    loadComponent: () => import('./components/pollution-list/pollution-list').then((m) => m.PollutionList),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'pollutions/new',
+    loadComponent: () => import('./components/pollution-create/pollution-create').then((m) => m.PollutionCreate),
+    canActivate: [authGuard],
+  },
   // Étapes 4 et 5 : accès au détail par identifiant pour modifier ou supprimer.
-  { path: 'pollutions/:id', component: PollutionDetail },
+  {
+    path: 'pollutions/:id',
+    loadComponent: () => import('./components/pollution-detail/pollution-detail').then((m) => m.PollutionDetail),
+    canActivate: [authGuard],
+  },
   // Toute URL inconnue revient à l’accueil.
   { path: '**', redirectTo: '' },
 ];

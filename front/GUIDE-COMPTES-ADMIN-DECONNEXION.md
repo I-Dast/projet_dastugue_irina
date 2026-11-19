@@ -41,6 +41,7 @@ session par `UserService.endSession()` puis navigue vers `/login`.
 | [`src/app/app.css`](./src/app/app.css) | Position et couleur du bouton, visibilité ordinateur, style du message et animation. |
 | [`src/app/services/user.service.ts`](./src/app/services/user.service.ts) | État de session et méthodes de connexion/déconnexion. |
 | [`src/app/components/login/login.ts`](./src/app/components/login/login.ts) | Démarre la session après une authentification réussie. |
+| [`src/app/components/signup/signup.ts`](./src/app/components/signup/signup.ts) | Démarre la session après une inscription réussie. |
 | [`src/app/app.spec.ts`](./src/app/app.spec.ts) | Vérifie l’affichage du bouton et la distinction souris/tactile pour la main. |
 | [`src/app/services/user.service.spec.ts`](./src/app/services/user.service.spec.ts) | Vérifie l’état de session et les requêtes administrateur. |
 
@@ -52,6 +53,8 @@ accessible « Se déconnecter ».
 Après connexion, `UserService.startSession()` enregistre un marqueur de
 session dans `sessionStorage`. Pour un administrateur, il conserve également
 le jeton API. Le signal `isAuthenticated` pilote l’affichage du bouton.
+Une inscription réussie démarre aussi une session, car le formulaire envoie
+directement le nouvel utilisateur vers `/pollutions`.
 
 `UserService.endSession()` supprime le marqueur et le jeton, puis met à jour le
 signal. Le bouton partagé dans `app.html` appelle cette méthode pour les deux
@@ -87,6 +90,8 @@ guide ou dans un fichier versionné.
 ### Écran administrateur
 
 - [`src/app/app.routes.ts`](./src/app/app.routes.ts) déclare `/admin/users`.
+- [`src/app/guards/auth.guard.ts`](./src/app/guards/auth.guard.ts) protège les
+  pages de pollution et redirige vers la connexion sans session.
 - [`src/app/guards/admin.guard.ts`](./src/app/guards/admin.guard.ts) redirige
   vers la connexion si aucun jeton administrateur n’est conservé.
 - [`src/app/components/login/login.ts`](./src/app/components/login/login.ts)
@@ -108,6 +113,8 @@ guide ou dans un fichier versionné.
 
 - `front/GUIDE-COMPTES-ADMIN-DECONNEXION.md` — ce guide.
 - `front/src/app/guards/admin.guard.ts` — garde de la route administrateur.
+- `front/src/app/guards/auth.guard.ts` — garde des pages de pollution.
+- `front/src/app/guards/auth.guard.spec.ts` — tests du garde de session.
 - `front/src/app/components/admin-users/admin-users.ts` — logique de la page.
 - `front/src/app/components/admin-users/admin-users.html` — tableau et actions.
 - `front/src/app/components/admin-users/admin-users.css` — styles de la page.
@@ -117,7 +124,9 @@ guide ou dans un fichier versionné.
 ### Fichiers existants modifiés
 
 - Front : `src/app/app.ts`, `app.html`, `app.css`, `app.routes.ts`,
-  `app.spec.ts`, `components/login/login.ts`, `services/user.service.ts` et
+  `app.spec.ts`, `components/login/login.ts`,
+  `components/login/login.spec.ts`, `components/signup/signup.ts`,
+  `components/signup/signup.spec.ts`, `services/user.service.ts` et
   `services/user.service.spec.ts`.
 - API : `src/config.ts`, `src/index.ts`, `src/models/users.model.ts`,
   `src/controllers/user.controllers.ts`, `src/routes/user.routes.ts` et

@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -21,6 +21,7 @@ const matchingPasswords: ValidatorFn = (
 };
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ReactiveFormsModule],
   selector: 'app-signup',
   styleUrl: './signup.css',
@@ -73,23 +74,23 @@ export class Signup {
     { validators: matchingPasswords },
   );
 
-  isSubmitting = false;
-  successMessage = '';
-  errorMessage = '';
+  readonly isSubmitting = signal(false);
+  readonly successMessage = signal('');
+  readonly errorMessage = signal('');
 
   goToLogin(): void {
     void this.router.navigateByUrl('/login');
   }
 
   submit(): void {
-    if (this.form.invalid || this.isSubmitting) {
+    if (this.form.invalid || this.isSubmitting()) {
       this.form.markAllAsTouched();
       return;
     }
 
-    this.isSubmitting = true;
-    this.successMessage = '';
-    this.errorMessage = '';
+    this.isSubmitting.set(true);
+    this.successMessage.set('');
+    this.errorMessage.set('');
 
     // La confirmation sert uniquement à valider le formulaire et n'est jamais transmise à l'API.
     const { confirmPassword: _confirmPassword, ...data } =
@@ -98,19 +99,21 @@ export class Signup {
 
     this.userService
       .signup(request)
-      .pipe(finalize(() => (this.isSubmitting = false)))
+      .pipe(finalize(() => this.isSubmitting.set(false)))
       .subscribe({
-        next: () => {
-          this.successMessage = 'Inscription enregistrée avec succès.';
+        next: (user) => {
+          this.userService.startSession(user);
+          this.successMessage.set('Inscription enregistrée avec succès.');
           void this.router.navigateByUrl('/pollutions');
         },
         error: (error: unknown) => {
           const message =
             error instanceof HttpErrorResponse ? error.error?.message : null;
-          this.errorMessage =
+          this.errorMessage.set(
             typeof message === 'string'
               ? message
-              : 'Impossible de contacter le serveur. Vérifiez que l’API est démarrée.';
+              : 'Impossible de contacter le serveur. Vérifiez que l’API est démarrée.',
+          );
         },
       });
   }

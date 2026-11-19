@@ -1,11 +1,12 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 import { UserCredentials, UserService } from '../../services/user.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ReactiveFormsModule],
   selector: 'app-login',
   styleUrl: './login.css',
@@ -21,30 +22,30 @@ export class Login {
     password: ['', Validators.required],
   });
 
-  isSubmitting = false;
-  errorMessage = '';
+  readonly isSubmitting = signal(false);
+  readonly errorMessage = signal('');
 
   goToSignup(): void {
     void this.router.navigateByUrl('/');
   }
 
   submit(): void {
-    if (this.form.invalid || this.isSubmitting) {
+    if (this.form.invalid || this.isSubmitting()) {
       this.form.markAllAsTouched();
       return;
     }
 
-    this.isSubmitting = true;
-    this.errorMessage = '';
+    this.isSubmitting.set(true);
+    this.errorMessage.set('');
     const credentials: UserCredentials = this.form.getRawValue();
 
     this.userService
       .authenticate(credentials)
-      .pipe(finalize(() => (this.isSubmitting = false)))
+      .pipe(finalize(() => this.isSubmitting.set(false)))
       .subscribe({
         next: (user) => {
           if (user.isAdmin && !user.accessToken) {
-            this.errorMessage = 'La connexion administrateur a échoué.';
+            this.errorMessage.set('La connexion administrateur a échoué.');
             return;
           }
 
@@ -59,10 +60,11 @@ export class Login {
         error: (error: unknown) => {
           const message =
             error instanceof HttpErrorResponse ? error.error?.message : null;
-          this.errorMessage =
+          this.errorMessage.set(
             typeof message === 'string'
               ? message
-              : 'Impossible de contacter le serveur. Vérifiez que l’API est démarrée.';
+              : 'Impossible de contacter le serveur. Vérifiez que l’API est démarrée.',
+          );
         },
       });
   }

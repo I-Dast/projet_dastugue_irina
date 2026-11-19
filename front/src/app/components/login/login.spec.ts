@@ -6,6 +6,7 @@ import {
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { Login } from './login';
+import { UserService } from '../../services/user.service';
 
 describe('Login', () => {
   let component: Login;
@@ -30,13 +31,14 @@ describe('Login', () => {
     component.submit();
 
     expect(component.form.touched).toBe(true);
-    expect(component.isSubmitting).toBe(false);
+    expect(component.isSubmitting()).toBe(false);
   });
 
   it('authenticates and navigates to the pollution list', () => {
     component.form.setValue({ login: 'ada.lovelace', password: 'password123' });
 
     const router = TestBed.inject(Router);
+    const userService = TestBed.inject(UserService);
     const navigateSpy = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
     component.submit();
 
@@ -46,10 +48,11 @@ describe('Login', () => {
       login: 'ada.lovelace',
       password: 'password123',
     });
-    request.flush({ id: 1 });
+    request.flush({ id: 1, isAdmin: false });
 
     expect(navigateSpy).toHaveBeenCalledWith('/pollutions');
-    expect(component.isSubmitting).toBe(false);
+    expect(userService.isAuthenticated()).toBe(true);
+    expect(component.isSubmitting()).toBe(false);
   });
 
   it('shows the authentication error returned by the API', () => {
@@ -62,6 +65,6 @@ describe('Login', () => {
       { status: 401, statusText: 'Unauthorized' },
     );
 
-    expect(component.errorMessage).toBe('Login ou mot de passe incorrect.');
+    expect(component.errorMessage()).toBe('Login ou mot de passe incorrect.');
   });
 });

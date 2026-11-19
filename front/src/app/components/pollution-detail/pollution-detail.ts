@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HighlightPollutionDirective } from '../../directives/highlight-pollution.directive';
@@ -8,6 +8,7 @@ import { GeolocationService } from '../../services/geolocation.service';
 import { PollutionService } from '../../services/pollution.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [HighlightPollutionDirective, PollutionLevelPipe, ReactiveFormsModule, RouterLink],
   selector: 'app-pollution-detail',
   styleUrl: './pollution-detail.css',

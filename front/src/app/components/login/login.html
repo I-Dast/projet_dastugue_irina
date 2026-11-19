@@ -25,12 +25,12 @@
         }
       </div>
 
-      <button type="submit" [disabled]="form.invalid || isSubmitting">
-        {{ isSubmitting ? 'Connexion en cours…' : 'Me connecter' }}
+      <button type="submit" [disabled]="form.invalid || isSubmitting()">
+        {{ isSubmitting() ? 'Connexion en cours…' : 'Me connecter' }}
       </button>
 
-      @if (errorMessage) {
-        <p class="feedback error" role="alert">{{ errorMessage }}</p>
+      @if (errorMessage()) {
+        <p class="feedback error" role="alert">{{ errorMessage() }}</p>
       }
 
       <button class="signup-button" type="button" (click)="goToSignup()">
