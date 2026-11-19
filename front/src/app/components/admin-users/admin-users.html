@@ -1,0 +1,62 @@
+<main class="page">
+  <header class="page-header">
+    <p class="eyebrow">Administration</p>
+    <h1>Gestion des comptes</h1>
+    <p>Consultez les utilisateurs inscrits et supprimez un compte si nécessaire.</p>
+  </header>
+
+  <section class="panel" aria-labelledby="users-title">
+    <h2 id="users-title">Utilisateurs ({{ users().length }})</h2>
+    @if (errorMessage()) {
+      <p class="message message--error" role="alert">{{ errorMessage() }}</p>
+    }
+    @if (successMessage()) {
+      <p class="message message--success" role="status">{{ successMessage() }}</p>
+    }
+    @if (isLoading()) {
+      <p class="empty-state" role="status">Chargement des comptes…</p>
+    } @else if (users().length === 0) {
+      <p class="empty-state">Aucun compte utilisateur.</p>
+    } @else {
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Identifiant</th>
+              <th scope="col">Nom</th>
+              <th scope="col">Adresse e-mail</th>
+              <th scope="col">Téléphone</th>
+              <th scope="col">Rôle</th>
+              <th scope="col"><span class="visually-hidden">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (user of users(); track user.id) {
+              <tr>
+                <td>{{ user.login }}</td>
+                <td>{{ user.prenom }} {{ user.nom }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.telephone || '—' }}</td>
+                <td>{{ user.isAdmin ? 'Administrateur' : 'Utilisateur' }}</td>
+                <td>
+                  @if (!user.isAdmin) {
+                    <button
+                      class="delete-button"
+                      type="button"
+                      [disabled]="deletingId() !== null"
+                      (click)="deleteUser(user)"
+                    >
+                      {{ deletingId() === user.id ? 'Suppression…' : 'Supprimer' }}
+                    </button>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+
+  <a class="back-link" routerLink="/pollutions">Retour aux pollutions</a>
+</main>

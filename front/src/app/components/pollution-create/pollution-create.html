@@ -117,11 +117,11 @@
         </div>
       </fieldset>
 
-      <button class="geolocate-button" type="button" [disabled]="isLocating" (click)="locateDevice()">
-        {{ isLocating ? 'Géolocalisation en cours…' : 'Utiliser ma position' }}
+      <button class="geolocate-button" type="button" [disabled]="isLocating()" (click)="locateDevice()">
+        {{ isLocating() ? 'Géolocalisation en cours…' : 'Utiliser ma position' }}
       </button>
-      @if (locationErrorMessage) {
-        <p class="message message--error" role="alert">{{ locationErrorMessage }}</p>
+      @if (locationErrorMessage()) {
+        <p class="message message--error" role="alert">{{ locationErrorMessage() }}</p>
       }
 
       <div class="field">
@@ -129,13 +129,13 @@
         <input id="photoUrl" type="url" formControlName="photoUrl">
       </div>
 
-      @if (errorMessage) {
-        <p class="message message--error" role="alert">{{ errorMessage }}</p>
+      @if (errorMessage()) {
+        <p class="message message--error" role="alert">{{ errorMessage() }}</p>
       }
 
       <div class="form-actions">
-        <button type="submit" [disabled]="isSaving">
-          {{ isSaving ? 'Ajout en cours…' : 'Enregistrer la pollution' }}
+        <button type="submit" [disabled]="isSaving()">
+          {{ isSaving() ? 'Ajout en cours…' : 'Enregistrer la pollution' }}
         </button>
         <a class="cancel-link" routerLink="/pollutions">Annuler</a>
       </div>

@@ -3,5 +3,32 @@
   (pointermove)="updateBackgroundPointer($event)"
   (pointerleave)="resetBackgroundPointer($event)"
 >
+  @if (userService.isAuthenticated()) {
+    <button
+      class="logout-button"
+      type="button"
+      aria-label="Se déconnecter"
+      title="Se déconnecter"
+      (pointerenter)="showLogoutWave($event)"
+      (pointermove)="moveLogoutWave($event)"
+      (pointerleave)="hideLogoutWave()"
+      (click)="logout()"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M12 2a10 10 0 1 0 0 20M9 12h11m-5-5 5 5-5 5" />
+      </svg>
+    </button>
+  }
+  @if (logoutWaveVisible()) {
+    <span
+      class="logout-wave"
+      aria-hidden="true"
+      [style.left.px]="logoutWaveX()"
+      [style.top.px]="logoutWaveY()"
+    >
+      <span class="logout-wave__hand">👋🏻</span>
+      <span class="logout-wave__message">Bye bye !</span>
+    </span>
+  }
   <router-outlet />
 </div>

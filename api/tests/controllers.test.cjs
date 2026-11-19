@@ -1,6 +1,7 @@
 // These controller tests stub Sequelize methods so they never need a PostgreSQL connection.
 const { afterEach, test, mock } = require('node:test');
 const assert = require('node:assert/strict');
+const { scryptSync } = require('node:crypto');
 
 // Keep model initialization independent of any database URL inherited from the shell.
 delete process.env.DATABASE_URL;
@@ -14,6 +15,8 @@ process.env.DB_SSL = 'false';
 const db = require('../dist/models').default;
 const pollutionController = require('../dist/controllers/pollution.controllers');
 const userController = require('../dist/controllers/user.controllers');
+const requireAdmin = require('../dist/middleware/require-admin').default;
+const { createAdminToken } = require('../dist/controllers/admin-auth');
 
 const pollutionPayload = {
   titreDeclarationDePollution: 'Déchets près du canal',
@@ -32,7 +35,8 @@ const publicUser = {
   nom: 'Lovelace',
   prenom: 'Ada',
   email: 'ada@example.com',
-  telephone: '+33123456789'
+  telephone: '+33123456789',
+  isAdmin: false
 };
 
 // Restore mocked ORM methods after each test to avoid leaking behavior between cases.
@@ -205,4 +209,71 @@ test('mock authentication returns 401 when the login does not exist', async () =
   );
 
   assert.equal(response.statusCode, 401);
+});
+
+test('admin authentication returns a signed token without exposing the password hash', async () => {
+  const salt = Buffer.alloc(16, 3);
+  const adminUser = {
+    ...publicUser,
+    isAdmin: true,
+    passwordHash: `scrypt:${salt.toString('hex')}:${scryptSync('password123', salt, 64).toString('hex')}`
+  };
+  mock.method(db.users, 'findOne', async () => adminUser);
+  const response = createResponse();
+
+  await userController.authenticate(
+    { body: { login: adminUser.login, password: 'password123' } },
+    response
+  );
+
+  assert.equal(response.statusCode, 200);
+  assert.equal(response.body.isAdmin, true);
+  assert.equal(typeof response.body.accessToken, 'string');
+  assert.equal(response.body.passwordHash, undefined);
+});
+
+test('admin middleware rejects requests without a token before querying users', async () => {
+  const findByPk = mock.method(db.users, 'findByPk');
+  const response = createResponse();
+  response.locals = {};
+
+  await requireAdmin(
+    { get: () => undefined },
+    response,
+    () => assert.fail('next should not be called')
+  );
+
+  assert.equal(response.statusCode, 401);
+  assert.equal(findByPk.mock.callCount(), 0);
+});
+
+test('admin middleware rejects a valid token when the account is no longer an admin', async () => {
+  mock.method(db.users, 'findByPk', async () => ({ id: 8, isAdmin: false }));
+  const response = createResponse();
+  response.locals = {};
+
+  await requireAdmin(
+    { get: () => `Bearer ${createAdminToken(8)}` },
+    response,
+    () => assert.fail('next should not be called')
+  );
+
+  assert.equal(response.statusCode, 403);
+});
+
+test('admin middleware accepts a signed token only for an admin account', async () => {
+  const adminUser = { id: 8, isAdmin: true };
+  const findByPk = mock.method(db.users, 'findByPk', async () => adminUser);
+  const response = createResponse();
+  response.locals = {};
+  let continued = false;
+
+  await requireAdmin(
+    { get: () => `Bearer ${createAdminToken(adminUser.id)}` },
+    response,
+    () => { continued = true; }
+  );
+
+  assert.equal(findByPk.mock.calls[0].arguments[0], adminUser.id);
+  assert.equal(continued, true);
 });
