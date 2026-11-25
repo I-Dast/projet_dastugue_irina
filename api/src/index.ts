@@ -36,8 +36,8 @@ initRoutes(app);
 const start = async (): Promise<void> => {
   try {
     await db.sequelize.authenticate();
-    // Sequelize crée les tables manquantes déclarées par les modèles, sans remplacer les tables existantes.
-    await db.sequelize.sync();
+    // Sequelize réconcilie les tables existantes avec les modèles et crée celles qui manquent.
+    await db.sequelize.sync({ alter: true });
     // Migration PostgreSQL idempotente : supprime aussi les anciennes valeurs déjà stockées dans ces colonnes.
     // Cette suppression est définitive ; IF EXISTS permet de redémarrer sans erreur après la migration.
     await db.sequelize.query(
