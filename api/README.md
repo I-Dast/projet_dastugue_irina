@@ -16,9 +16,12 @@
    npm run dev
    ```
 
-Au démarrage, l'API se connecte à `pollution_db`, crée la table `pollution` si
-elle n'existe pas encore et insère un jeu de données si la table est vide. Dans
-pgAdmin, actualiser **Schemas > public > Tables** pour voir la table.
+Au démarrage, l'API se connecte à `pollution_db`, crée la table `pollutions` si
+elle n'existe pas encore et insère cinq signalements fictifs de démonstration
+uniquement si la table est vide. Les exemples sont situés à Strasbourg et
+couvrent plusieurs types de pollution. Si la table contient déjà des données,
+le jeu de démonstration n'est pas ajouté. Dans pgAdmin, actualiser
+**Schemas > public > Tables** pour voir la table.
 
 ## Tester les routes GET
 
@@ -39,3 +42,21 @@ ADD COLUMN IF NOT EXISTS "indiceDangerosite" DOUBLE PRECISION;
 La connexion locale utilise `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`,
 `DB_PASSWORD` et `DB_SSL`. Pour une base distante, `DATABASE_URL` peut remplacer
 ces paramètres. Ne pas versionner le fichier `.env`.
+
+## Administration des comptes
+
+Configurer `ADMIN_LOGIN` et `ADMIN_PASSWORD` dans `api/.env` pour créer le
+compte administrateur au démarrage. Le mot de passe doit comporter au moins
+8 caractères ; il est stocké sous forme de hash. À chaque démarrage, les
+identifiants configurés sont appliqués au compte administrateur. Si le login
+existe déjà pour un compte ordinaire, l'API refuse de démarrer : choisissez un
+login distinct. Définir aussi
+`AUTH_TOKEN_SECRET` avec une valeur secrète longue et aléatoire : les jetons
+d'administration expirent après 8 heures. Sans cette variable, l'API génère
+une clé temporaire au démarrage et les jetons cessent alors d'être valides au
+redémarrage.
+
+Après connexion avec ce compte, l'application ouvre `/admin/users`. Cette page
+permet de consulter les comptes et de supprimer les comptes ordinaires. Les
+routes API de liste et de suppression sont protégées côté serveur ; le compte
+administrateur ne peut pas être supprimé depuis cette interface.

@@ -1,3 +1,5 @@
+import { randomBytes } from "node:crypto";
+
 export interface DatabaseConfig {
   host: string;
   port: number;
@@ -10,12 +12,19 @@ export interface DatabaseConfig {
 
 export interface AppConfig {
   BDD: DatabaseConfig;
+  adminLogin?: string;
+  adminPassword?: string;
+  authTokenSecret: string;
 }
 
 const databaseUrl = process.env.DATABASE_URL;
 const parsedDatabaseUrl = databaseUrl ? new URL(databaseUrl) : undefined;
 
 export const config: AppConfig = {
+  adminLogin: process.env.ADMIN_LOGIN,
+  adminPassword: process.env.ADMIN_PASSWORD,
+  authTokenSecret:
+    process.env.AUTH_TOKEN_SECRET || randomBytes(32).toString("hex"),
   BDD: {
     host: process.env.DB_HOST || parsedDatabaseUrl?.hostname || "localhost",
     port: Number(process.env.DB_PORT || parsedDatabaseUrl?.port || 5432),

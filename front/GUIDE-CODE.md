@@ -16,7 +16,27 @@ de les enregistrer dans PostgreSQL.
 
 Le routage est défini dans [app.routes.ts](./src/app/app.routes.ts). La route
 `/pollutions/new` est déclarée avant la route paramétrée `/pollutions/:id`, afin
-que `new` soit traité comme la page de création.
+que `new` soit traité comme la page de création. Les écrans sont chargés à la
+demande avec `loadComponent` plutôt que d’être importés dans le bundle initial.
+
+## Détection des changements avec OnPush
+
+Les composants d’écran utilisent explicitement
+`ChangeDetectionStrategy.OnPush`. Leur état asynchrone est exposé avec des
+signaux Angular ; lorsqu’un signal lu par le template change, Angular marque le
+composant pour mise à jour. Les formulaires réactifs continuent de répondre aux
+événements provenant de leurs champs. Pour une nouvelle valeur provenant d’un
+callback asynchrone, privilégier un signal plutôt qu’une propriété ordinaire
+afin que l’affichage reste synchronisé avec OnPush.
+
+La stratégie est déclarée dans le décorateur `@Component` de
+[app.ts](./src/app/app.ts), [pollution-list.ts](./src/app/components/pollution-list/pollution-list.ts),
+[pollution-detail.ts](./src/app/components/pollution-detail/pollution-detail.ts),
+[pollution-create.ts](./src/app/components/pollution-create/pollution-create.ts),
+[login.ts](./src/app/components/login/login.ts),
+[signup.ts](./src/app/components/signup/signup.ts),
+[admin-users.ts](./src/app/components/admin-users/admin-users.ts) et
+[pollution-recap.ts](./src/app/components/pollution-recap/pollution-recap.ts).
 
 ## Inscription et données utilisateur
 

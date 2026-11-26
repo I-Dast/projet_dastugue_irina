@@ -92,10 +92,19 @@
         <ul class="pollution-list">
           <!-- track conserve les éléments DOM associés à leur id lorsque la liste change. -->
           @for (pollution of filteredPollutions(); track pollution.id ?? $index) {
-            <li [appHighlightPollution]="pollution.indiceDangerosite ?? undefined">
+            <li>
               <div class="pollution-heading">
                 <h3>{{ pollution.titreDeclarationDePollution }}</h3>
-                <span class="badge">{{ pollution.typePollution }}</span>
+                <span class="pollution-type">
+                  <span class="badge">{{ pollution.typePollution }}</span>
+                  @if (pollution.indiceDangerosite !== undefined && pollution.indiceDangerosite !== null) {
+                    <span
+                      class="danger-indicator"
+                      [appHighlightPollution]="pollution.indiceDangerosite"
+                      aria-hidden="true"
+                    ></span>
+                  }
+                </span>
               </div>
               <p>{{ pollution.description }}</p>
               <p class="pollution-meta">{{ pollution.lieu }} · {{ pollution.dateObservation }}</p>

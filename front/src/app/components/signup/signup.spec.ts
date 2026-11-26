@@ -6,6 +6,7 @@ import {
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { Signup } from './signup';
+import { UserService } from '../../services/user.service';
 
 describe('Signup', () => {
   let component: Signup;
@@ -50,7 +51,7 @@ describe('Signup', () => {
     component.submit();
 
     expect(component.form.touched).toBe(true);
-    expect(component.isSubmitting).toBe(false);
+    expect(component.isSubmitting()).toBe(false);
   });
 
   it('navigates to the login page from the existing-account button', () => {
@@ -78,6 +79,7 @@ describe('Signup', () => {
     });
 
     const router = TestBed.inject(Router);
+    const userService = TestBed.inject(UserService);
     const navigateSpy = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
     component.submit();
 
@@ -99,8 +101,10 @@ describe('Signup', () => {
       prenom: 'Ada',
       email: 'ada@example.com',
       telephone: '+33123456789',
+      isAdmin: false,
     });
-    expect(component.successMessage).toBe('Inscription enregistrée avec succès.');
+    expect(component.successMessage()).toBe('Inscription enregistrée avec succès.');
     expect(navigateSpy).toHaveBeenCalledWith('/pollutions');
+    expect(userService.isAuthenticated()).toBe(true);
   });
 });

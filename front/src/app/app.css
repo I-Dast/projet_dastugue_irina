@@ -1,4 +1,108 @@
+/* Le composant racine occupe au minimum toute la hauteur de la fenêtre. */
 :host {
   display: block;
   min-height: 100vh;
+}
+
+/* Bouton de déconnexion fixé dans le coin supérieur droit de l’écran. */
+.logout-button {
+  position: fixed;
+  z-index: 10;
+  top: 1.25rem;
+  right: 1.5rem;
+  display: grid;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  color: #245328;
+  background: transparent;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+/* Assombrit légèrement l’icône au survol sans ajouter de fond au bouton. */
+.logout-button:hover {
+  color: #183d1b;
+  background: transparent;
+}
+
+/* Rend le bouton clairement visible lors de la navigation au clavier. */
+.logout-button:focus-visible {
+  outline: 3px solid #466b4a;
+  outline-offset: 3px;
+}
+
+/* Dimensionne et dessine l’icône SVG avec la couleur du bouton. */
+.logout-button svg {
+  width: 2rem;
+  height: 2rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.6;
+}
+
+/* La salutation est masquée par défaut, notamment sur les appareils tactiles. */
+.logout-wave {
+  display: none;
+}
+
+/* Affiche la salutation uniquement sur les appareils capables de survol précis. */
+@media (hover: hover) and (pointer: fine) {
+  .logout-wave {
+    position: fixed;
+    z-index: 11;
+    display: block;
+    pointer-events: none;
+    text-align: center;
+    white-space: nowrap;
+    transform: translateX(-50%);
+  }
+
+  /* Style et animation de la main qui salue. */
+  .logout-wave__hand {
+    display: block;
+    font-size: 1.6rem;
+    line-height: 1;
+    filter: grayscale(1) brightness(1.35) drop-shadow(0 1px 1px #245328);
+    transform-origin: 70% 70%;
+    animation: logout-wave 700ms ease-in-out infinite;
+  }
+
+  /* Texte placé sous la main, avec une ombre pour rester lisible sur le fond. */
+  .logout-wave__message {
+    display: block;
+    margin-top: 0.1rem;
+    color: #245328;
+    font-family: "Calibri Light", Calibri, sans-serif;
+    font-size: 0.72rem;
+    font-weight: 300;
+    line-height: 1.2;
+    text-shadow: 0 1px 3px #fff;
+  }
+}
+
+/* Fait pivoter la main alternativement dans les deux sens pour simuler un signe. */
+@keyframes logout-wave {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(18deg);
+  }
+  75% {
+    transform: rotate(-18deg);
+  }
+}
+
+/* Respecte le réglage système qui demande de réduire les animations. */
+@media (prefers-reduced-motion: reduce) {
+  .logout-wave__hand {
+    animation: none;
+  }
 }

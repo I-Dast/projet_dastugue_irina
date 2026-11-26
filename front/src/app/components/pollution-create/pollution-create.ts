@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
@@ -11,6 +11,7 @@ import { GeolocationService } from '../../services/geolocation.service';
 import { PollutionService } from '../../services/pollution.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     HighlightPollutionDirective,
     PollutionLevelPipe,
@@ -41,10 +42,10 @@ export class PollutionCreate {
     indiceDangerosite: this.formBuilder.control<number | null>(null, Validators.min(0)),
   });
 
-  isSaving = false;
-  isLocating = false;
-  errorMessage = '';
-  locationErrorMessage = '';
+  readonly isSaving = signal(false);
+  readonly isLocating = signal(false);
+  readonly errorMessage = signal('');
+  readonly locationErrorMessage = signal('');
   readonly recapPollution = signal<Pollution | null>(null);
 
   updateDangerIndex(event: Event): void {
@@ -55,8 +56,8 @@ export class PollutionCreate {
 
   // Remplit les coordonnées avec la position autorisée par le navigateur.
   async locateDevice(): Promise<void> {
-    this.isLocating = true;
-    this.locationErrorMessage = '';
+    this.isLocating.set(true);
+    this.locationErrorMessage.set('');
 
     try {
       const position = await this.geolocationService.getCurrentPosition();
@@ -64,18 +65,19 @@ export class PollutionCreate {
       this.pollutionForm.controls.latitude.markAsDirty();
       this.pollutionForm.controls.longitude.markAsDirty();
     } catch (error: unknown) {
-      this.locationErrorMessage =
+      this.locationErrorMessage.set(
         error instanceof Error
           ? error.message
-          : 'Une erreur est survenue lors de la géolocalisation.';
+          : 'Une erreur est survenue lors de la géolocalisation.',
+      );
     } finally {
-      this.isLocating = false;
+      this.isLocating.set(false);
     }
   }
 
   // Envoie la déclaration et revient à la liste seulement après une création confirmée.
   addPollution(): void {
-    if (this.pollutionForm.invalid || this.isSaving) {
+    if (this.pollutionForm.invalid || this.isSaving()) {
       this.pollutionForm.markAllAsTouched();
       return;
     }
@@ -86,11 +88,11 @@ export class PollutionCreate {
       return;
     }
 
-    this.isSaving = true;
-    this.errorMessage = '';
+    this.isSaving.set(true);
+    this.errorMessage.set('');
     this.pollutionService
       .create({ ...this.pollutionForm.getRawValue(), typePollution })
-      .pipe(finalize(() => (this.isSaving = false)))
+      .pipe(finalize(() => this.isSaving.set(false)))
       .subscribe({
         next: (pollution) => {
           this.recapPollution.set(pollution);
@@ -98,10 +100,11 @@ export class PollutionCreate {
         error: (error: unknown) => {
           const message =
             error instanceof HttpErrorResponse ? error.error?.message : null;
-          this.errorMessage =
+          this.errorMessage.set(
             typeof message === 'string'
               ? message
-              : this.pollutionService.getErrorMessage(error);
+              : this.pollutionService.getErrorMessage(error),
+          );
         },
       });
   }

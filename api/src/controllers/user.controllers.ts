@@ -1,8 +1,10 @@
 import { randomBytes, scrypt, timingSafeEqual } from "node:crypto";
 import { Request, Response } from "express";
 import { UniqueConstraintError } from "sequelize";
+import { config } from "../config";
 import db from "../models";
 import type { UserInstance } from "../models/users.model";
+import { createAdminToken } from "./admin-auth";
 
 const Users = db.users;
 
@@ -53,7 +55,8 @@ export const create = async (req: Request, res: Response): Promise<void> => {
       prenom: signup.prenom.trim(),
       email: signup.email.trim().toLowerCase(),
       telephone: signup.telephone.trim(),
-      passwordHash
+      passwordHash,
+      isAdmin: false
     });
 
     res.status(201).json(toPublicUser(user));
@@ -71,7 +74,7 @@ export const create = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-// Authentifie un login sans créer de session ni de jeton : cette route simule la connexion du TP.
+// Authentifie un compte et délivre un jeton temporaire uniquement aux administrateurs.
 export const authenticate = async (req: Request, res: Response): Promise<void> => {
   const credentials = parseCredentials(req.body);
   if (!credentials) {
@@ -86,12 +89,58 @@ export const authenticate = async (req: Request, res: Response): Promise<void> =
       return;
     }
 
-    res.status(200).json(toPublicUser(user));
+    const publicUser = toPublicUser(user);
+    res.status(200).json(
+      user.isAdmin
+        ? { ...publicUser, isAdmin: true, accessToken: createAdminToken(user.id) }
+        : publicUser
+    );
   } catch (error: unknown) {
     // L'erreur détaillée reste dans les logs serveur ; le client reçoit un message générique.
     console.error("Erreur lors de l'authentification d'un utilisateur :", error);
     res.status(500).json({ message: "Impossible de vérifier les identifiants." });
   }
+};
+
+export const ensureAdminAccount = async (): Promise<void> => {
+  const { adminLogin, adminPassword } = config;
+  if (!adminLogin && !adminPassword) {
+    console.warn("Compte administrateur non configuré (ADMIN_LOGIN/ADMIN_PASSWORD).");
+    return;
+  }
+  if (
+    !adminLogin ||
+    !adminPassword ||
+    adminLogin.trim().length < 3 ||
+    adminPassword.length < 8
+  ) {
+    throw new Error(
+      "ADMIN_LOGIN et ADMIN_PASSWORD valides sont requis pour créer le compte administrateur."
+    );
+  }
+
+  const login = adminLogin.trim();
+  const passwordHash = await hashPassword(adminPassword);
+  const existingAdmin = await Users.findOne({ where: { login } });
+  if (existingAdmin) {
+    if (!existingAdmin.isAdmin) {
+      throw new Error(
+        "ADMIN_LOGIN est déjà utilisé par un compte non administrateur. Choisissez un autre identifiant."
+      );
+    }
+    await existingAdmin.update({ passwordHash });
+    return;
+  }
+
+  await Users.create({
+    login,
+    nom: "Administrateur",
+    prenom: "Compte",
+    email: `admin+${login.toLowerCase()}@localhost.invalid`,
+    telephone: "",
+    passwordHash,
+    isAdmin: true
+  });
 };
 
 // Supprime un compte après vérification de son identifiant.
@@ -106,6 +155,12 @@ export const remove = async (req: Request, res: Response): Promise<void> => {
     const user = await Users.findByPk(id);
     if (!user) {
       res.status(404).json({ message: `Aucun utilisateur trouvé avec l'id=${id}.` });
+      return;
+    }
+    if (user.isAdmin) {
+      res.status(403).json({
+        message: "Un compte administrateur ne peut pas être supprimé ici."
+      });
       return;
     }
 
@@ -234,8 +289,9 @@ function toPublicUser(user: UserInstance) {
     nom: user.nom,
     prenom: user.prenom,
     email: user.email,
-    telephone: user.telephone
+    telephone: user.telephone,
+    isAdmin: user.isAdmin
   };
 }
 
-export default { create, getAll, remove, authenticate };
+export default { create, getAll, remove, authenticate, ensureAdminAccount };

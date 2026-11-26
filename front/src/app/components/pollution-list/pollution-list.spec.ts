@@ -43,6 +43,7 @@ describe('PollutionList', () => {
     fixture.detectChanges();
 
     expect(fixture.nativeElement.textContent).toContain(pollution.titreDeclarationDePollution);
+    expect(fixture.nativeElement.querySelector('.danger-indicator')).toBeNull();
     expect(fixture.nativeElement.querySelector('.detail-link')?.getAttribute('href')).toBe(
       '/pollutions/1',
     );
@@ -52,7 +53,7 @@ describe('PollutionList', () => {
     httpTesting.verify();
   });
 
-  it('should show and highlight the pollution danger level when an index is available', () => {
+  it('should color only the danger indicator and keep the pollution card white', () => {
     const fixture = TestBed.createComponent(PollutionList);
     const httpTesting = TestBed.inject(HttpTestingController);
 
@@ -73,9 +74,12 @@ describe('PollutionList', () => {
     ]);
     fixture.detectChanges();
 
-    const item = fixture.nativeElement.querySelector('.pollution-list li');
+    const item = fixture.nativeElement.querySelector('.pollution-list li') as HTMLElement;
+    const indicator = fixture.nativeElement.querySelector('.danger-indicator') as HTMLElement;
     expect(item.textContent).toContain('Indice : 51 — Élevée');
-    expect(item.style.backgroundColor).toBe('orange');
+    expect(item.style.backgroundColor).toBe('');
+    expect(getComputedStyle(item).backgroundColor).toBe('rgb(255, 255, 255)');
+    expect(indicator.style.backgroundColor).toBe('orange');
     httpTesting.verify();
   });
 

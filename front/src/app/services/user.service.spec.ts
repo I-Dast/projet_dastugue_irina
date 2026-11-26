@@ -18,9 +18,11 @@ describe('UserService', () => {
     prenom: 'Ada',
     email: 'ada@example.com',
     telephone: '+33123456789',
+    isAdmin: false,
   };
 
   beforeEach(() => {
+    sessionStorage.clear();
     TestBed.configureTestingModule({
       providers: [provideHttpClient(), provideHttpClientTesting()],
     });
@@ -50,17 +52,28 @@ describe('UserService', () => {
     request.flush(userProfile);
   });
 
-  it('lists users using the public users endpoint', () => {
+  it('lists users using the protected users endpoint', () => {
+    service.startSession({
+      ...userProfile,
+      isAdmin: true,
+      accessToken: 'signed-admin-token',
+    });
     service.list().subscribe((users) => {
       expect(users).toEqual([userProfile]);
     });
 
     const request = httpTesting.expectOne(`${apiEndpoint}/users`);
     expect(request.request.method).toBe('GET');
+    expect(request.request.headers.get('Authorization')).toBe('Bearer signed-admin-token');
     request.flush([userProfile]);
   });
 
   it('deletes a user by encoded id', () => {
+    service.startSession({
+      ...userProfile,
+      isAdmin: true,
+      accessToken: 'signed-admin-token',
+    });
     let completed = false;
     service.delete('user/1').subscribe(() => {
       completed = true;
@@ -68,6 +81,7 @@ describe('UserService', () => {
 
     const request = httpTesting.expectOne(`${apiEndpoint}/users/user%2F1`);
     expect(request.request.method).toBe('DELETE');
+    expect(request.request.headers.get('Authorization')).toBe('Bearer signed-admin-token');
     request.flush(null, { status: 204, statusText: 'No Content' });
     expect(completed).toBe(true);
   });
@@ -86,5 +100,15 @@ describe('UserService', () => {
     expect(request.request.method).toBe('POST');
     expect(request.request.body).toEqual(credentials);
     request.flush(userProfile);
+  });
+
+  it('tracks a regular-user session and clears it on logout', () => {
+    service.startSession(userProfile);
+    expect(service.isAuthenticated()).toBe(true);
+
+    service.endSession();
+
+    expect(service.isAuthenticated()).toBe(false);
+    expect(service.hasAdminToken()).toBe(false);
   });
 });
