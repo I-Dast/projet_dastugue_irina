@@ -5,7 +5,10 @@ import {
 } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { withNgxsStoragePlugin } from '@ngxs/storage-plugin';
+import { provideStore } from '@ngxs/store';
 import { environment } from '../../../environments/environment';
+import { PollutionsState } from '../../store/pollutions.state';
 import { PollutionList } from './pollution-list';
 
 describe('PollutionList', () => {
@@ -14,9 +17,18 @@ describe('PollutionList', () => {
     : `${environment.apiUrl.replace(/\/$/, '')}/api/pollutions`;
 
   beforeEach(async () => {
+    localStorage.clear();
     await TestBed.configureTestingModule({
       imports: [PollutionList],
-      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
+      providers: [
+        provideRouter([]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideStore(
+          [PollutionsState],
+          withNgxsStoragePlugin({ keys: [PollutionsState] }),
+        ),
+      ],
     }).compileComponents();
   });
 
@@ -50,6 +62,14 @@ describe('PollutionList', () => {
     expect(fixture.nativeElement.querySelector('.add-pollution-link')?.getAttribute('href')).toBe(
       '/pollutions/new',
     );
+    expect(JSON.parse(localStorage.getItem('pollutions') ?? 'null')).toEqual({
+      items: [pollution],
+      loading: false,
+      error: '',
+      deleting: false,
+      deleteError: '',
+      deleteSuccess: '',
+    });
     httpTesting.verify();
   });
 

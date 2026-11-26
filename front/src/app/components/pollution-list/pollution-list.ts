@@ -1,24 +1,35 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { Store } from '@ngxs/store';
+import { map } from 'rxjs';
 import { HighlightPollutionDirective } from '../../directives/highlight-pollution.directive';
 import { Pollution, TypePollution, TYPES_POLLUTION } from '../../models/pollution';
 import { PollutionLevelPipe } from '../../pipes/pollution-level.pipe';
-import { PollutionService } from '../../services/pollution.service';
+import { DeletePollution, LoadPollutions } from '../../store/pollutions.actions';
+import { PollutionsState } from '../../store/pollutions.state';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [HighlightPollutionDirective, PollutionLevelPipe, RouterLink],
+  imports: [AsyncPipe, HighlightPollutionDirective, PollutionLevelPipe, RouterLink],
   selector: 'app-pollution-list',
   styleUrl: './pollution-list.css',
   templateUrl: './pollution-list.html',
 })
 export class PollutionList implements OnInit {
-  // Le composant liste se limite au chargement, au filtrage et à la suppression.
-  private readonly pollutionService = inject(PollutionService);
+  private readonly store = inject(Store);
 
   /** Liste des types proposée dans le filtre. */
   readonly typesPollution = TYPES_POLLUTION;
-  readonly pollutions = signal<Pollution[]>([]);
+  readonly pollutions = this.store.selectSignal(PollutionsState.items);
+  readonly pollutionCount$ = this.store
+    .select(PollutionsState.items)
+    .pipe(map((items) => items.length));
+  readonly isLoading = this.store.selectSignal(PollutionsState.loading);
+  readonly isDeleting = this.store.selectSignal(PollutionsState.deleting);
+  readonly listErrorMessage = this.store.selectSignal(PollutionsState.error);
+  readonly deleteErrorMessage = this.store.selectSignal(PollutionsState.deleteError);
+  readonly deleteSuccessMessage = this.store.selectSignal(PollutionsState.deleteSuccess);
   /** Étape 6 : valeurs des filtres ; une chaîne vide signifie « aucun filtre ». */
   readonly searchText = signal('');
   readonly typeFilter = signal<TypePollution | ''>('');
@@ -52,25 +63,8 @@ export class PollutionList implements OnInit {
       );
     });
   });
-  /** Signaux d’état destinés aux indicateurs de chargement et aux messages dans le template. */
-  readonly isLoading = signal(true);
-  readonly isDeleting = signal(false);
-  readonly listErrorMessage = signal('');
-  readonly deleteErrorMessage = signal('');
-  readonly deleteSuccessMessage = signal('');
-
   ngOnInit(): void {
-    // Charge les enregistrements au premier affichage du composant.
-    this.pollutionService.list().subscribe({
-      next: (pollutions) => {
-        this.pollutions.set(pollutions);
-        this.isLoading.set(false);
-      },
-      error: (error: unknown) => {
-        this.isLoading.set(false);
-        this.listErrorMessage.set(this.pollutionService.getErrorMessage(error));
-      },
-    });
+    this.store.dispatch(new LoadPollutions());
   }
 
   /**
@@ -144,7 +138,7 @@ export class PollutionList implements OnInit {
    */
   deletePollution(pollution: Pollution): void {
     if (pollution.id === undefined) {
-      this.deleteErrorMessage.set('Impossible de supprimer cette pollution sans identifiant.');
+      this.store.dispatch(new DeletePollution(undefined));
       return;
     }
 
@@ -156,20 +150,6 @@ export class PollutionList implements OnInit {
       return;
     }
 
-    this.isDeleting.set(true);
-    this.deleteErrorMessage.set('');
-    this.deleteSuccessMessage.set('');
-
-    this.pollutionService.delete(pollution.id).subscribe({
-      next: () => {
-        this.pollutions.update((current) => current.filter((item) => item.id !== pollution.id));
-        this.isDeleting.set(false);
-        this.deleteSuccessMessage.set('La pollution a été supprimée.');
-      },
-      error: (error: unknown) => {
-        this.isDeleting.set(false);
-        this.deleteErrorMessage.set(this.pollutionService.getErrorMessage(error));
-      },
-    });
+    this.store.dispatch(new DeletePollution(pollution.id));
   }
 }

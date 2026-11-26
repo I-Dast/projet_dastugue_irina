@@ -486,3 +486,145 @@ aussi des outils de test HTTP, par exemple `provideHttpClientTesting()` et
   appels de lecture, modification, suppression et géolocalisation.
 - `tp3/src/app/app.config.ts` : configuration des fournisseurs HTTP, des
   intercepteurs et du routeur.
+
+## 5. NGXS : Actions, State, `@Action` et Selectors
+
+NGXS centralise un état partagé entre les composants. Dans cette application,
+le State `PollutionsState` contient la liste des pollutions et les indicateurs
+de chargement, d’erreur et de suppression.
+
+### 5.1. Le trajet d’une Action
+
+Une Action est une classe qui décrit une intention, par exemple
+`LoadPollutions` (« charger les pollutions ») ou `DeletePollution`
+(« supprimer cette pollution »). Le composant demande à NGXS de l’exécuter :
+
+```ts
+this.store.dispatch(new LoadPollutions());
+```
+
+Le State écoute cette Action grâce à un handler `@Action` :
+
+```ts
+@Action(LoadPollutions)
+load(ctx: StateContext<PollutionsStateModel>) {
+  ctx.patchState({ loading: true, error: '' });
+  // Le handler retourne l’Observable du service HTTP.
+}
+```
+
+Le handler `@Action` est le point où la transition d’état est appliquée. Il
+peut appeler un service asynchrone, puis utiliser `ctx.patchState(...)` pour
+mettre à jour une partie de l’état sans remplacer les autres champs. Ici, les
+résultats du service remplacent `items`; en cas d’erreur, le message est écrit
+dans `error`, et `loading` revient à `false`.
+
+### 5.2. Lire l’état avec les Selectors
+
+Un Selector expose une valeur calculée ou une partie du State sans donner au
+composant le droit de la modifier directement :
+
+```ts
+@Selector()
+static items(state: PollutionsStateModel): Pollution[] {
+  return state.items;
+}
+```
+
+Dans `AuthState`, les sélecteurs mémorisés `user` et `isAuthenticated` exposent
+respectivement le profil et le statut de connexion. `username` dérive le login
+du profil (`user?.login`) et retourne `null` après la déconnexion.
+
+`PollutionList` transforme ces sélecteurs en signaux avec
+`store.selectSignal(...)`. Le template lit ces signaux; quand NGXS change l’état,
+Angular met l’affichage à jour. Les filtres de recherche restent locaux au
+composant, car ils ne sont pas partagés avec le reste de l’application.
+
+NGXS peut aussi exposer un Selector comme Observable avec `store.select(...)`.
+Dans le composant de liste, `pollutionCount$` transforme ainsi la liste en
+nombre avec l’opérateur RxJS `map`; le template utilise ensuite le pipe Angular
+`async`. Ce pipe s’abonne à l’Observable et nettoie automatiquement
+l’abonnement à la destruction du composant. Choisis cette approche si tu veux
+composer des opérateurs RxJS; `selectSignal(...)` est une alternative directe
+quand le reste du composant travaille avec des Signals.
+
+Le flux complet est donc :
+
+1. le composant fait `dispatch(new LoadPollutions())` ;
+2. le handler `@Action` du State appelle `PollutionService.list()` ;
+3. le handler met à jour le State avec la réponse ;
+4. les Selectors réémettent les nouvelles valeurs et le composant s’actualise.
+
+### 5.3. Persister le State avec `@ngxs/storage-plugin`
+
+`withNgxsStoragePlugin` branche le plugin au store :
+
+```ts
+provideStore(
+  [PollutionsState],
+  withNgxsStoragePlugin({ keys: [PollutionsState] }),
+)
+```
+
+Le nom du State est `pollutions`. Le plugin sérialise automatiquement cette
+tranche dans `localStorage` lorsque le State change et la restaure au démarrage
+de l’application. Aucun appel manuel à `localStorage.setItem()` n’est nécessaire.
+
+Cette configuration persiste **toute** la tranche, y compris les indicateurs
+`loading`, `error`, `deleting`, `deleteError` et `deleteSuccess`, en plus de
+`items`. Il faut éviter d’y placer des secrets : le contenu de `localStorage`
+est accessible au JavaScript exécuté dans le navigateur.
+
+### 5.4. Repères NGXS dans le projet
+
+- `front/src/app/store/pollutions.actions.ts` : définitions des Actions.
+- `front/src/app/store/pollutions.state.ts` : modèle, State, handlers `@Action`
+  et Selectors.
+- `front/src/app/components/pollution-list/pollution-list.ts` : dispatch des
+  Actions et lecture des Selectors avec `selectSignal`.
+- `front/src/app/app.config.ts` : enregistrement du State et configuration du
+  plugin de persistance.
+
+### 5.5. Protéger une route avec un Guard fonctionnel
+
+Un Guard fonctionnel Angular (`CanActivateFn`) peut injecter le Store avec
+`inject(Store)` puis lire un Selector de façon synchrone avec
+`selectSnapshot(...)` :
+
+```ts
+export const authGuard: CanActivateFn = () => {
+  const store = inject(Store);
+  const router = inject(Router);
+
+  return store.selectSnapshot(AuthState.isAuthenticated) ||
+    router.parseUrl('/login');
+};
+```
+
+Le résultat est `true` si la navigation est autorisée, ou un `UrlTree` si le
+Router doit rediriger vers la connexion. `AuthState` initialise son indicateur
+depuis la session du navigateur; `UserService` le met à jour lors de la
+connexion et de la déconnexion.
+
+Ce Guard protège la navigation dans l’interface, mais ne sécurise pas à lui
+seul les données : l’API doit aussi vérifier les permissions pour chaque
+opération protégée.
+
+### 5.6. Mettre à jour le State avec `Login` et `Logout`
+
+`Login` transporte le profil public de l’utilisateur. Son handler met à jour
+les deux champs ensemble :
+
+```ts
+@Action(Login)
+login(ctx: StateContext<AuthStateModel>, action: Login): void {
+  ctx.patchState({ user: action.user, isAuthenticated: true });
+}
+```
+
+`Logout` n’a pas besoin de payload : son handler remet le State à ses valeurs
+initiales (`user: null` et `isAuthenticated: false`) avec `ctx.setState(...)`.
+`UserService.startSession()` et `endSession()` dispatchent ces Actions après
+avoir mis à jour la session du navigateur. Le profil public est conservé dans
+le State; le jeton d’administration reste dans `sessionStorage` et n’est pas
+ajouté au Store.

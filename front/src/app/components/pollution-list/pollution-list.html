@@ -81,7 +81,7 @@
           </div>
         </div>
         <p class="filter-count" aria-live="polite">
-          {{ filteredPollutions().length }} pollution(s) affichée(s) sur {{ pollutions().length }}
+          {{ filteredPollutions().length }} pollution(s) affichée(s) sur {{ pollutionCount$ | async }}
         </p>
       </section>
 

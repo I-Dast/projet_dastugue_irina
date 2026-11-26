@@ -5,8 +5,10 @@ import {
 } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
+import { provideStore } from '@ngxs/store';
 import { Login } from './login';
 import { UserService } from '../../services/user.service';
+import { AuthState } from '../../store/auth.state';
 
 describe('Login', () => {
   let component: Login;
@@ -16,7 +18,12 @@ describe('Login', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Login],
-      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
+      providers: [
+        provideRouter([]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideStore([AuthState]),
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Login);
