@@ -4,7 +4,9 @@ import {
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { provideStore, Store } from '@ngxs/store';
 import { environment } from '../../environments/environment';
+import { AuthState } from '../store/auth.state';
 import { UserCredentials, UserProfile, UserService } from './user.service';
 
 describe('UserService', () => {
@@ -24,7 +26,11 @@ describe('UserService', () => {
   beforeEach(() => {
     sessionStorage.clear();
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideStore([AuthState]),
+      ],
     });
     service = TestBed.inject(UserService);
     httpTesting = TestBed.inject(HttpTestingController);
@@ -103,12 +109,19 @@ describe('UserService', () => {
   });
 
   it('tracks a regular-user session and clears it on logout', () => {
+    const store = TestBed.inject(Store);
     service.startSession(userProfile);
     expect(service.isAuthenticated()).toBe(true);
+    expect(store.selectSnapshot(AuthState.isAuthenticated)).toBe(true);
+    expect(store.selectSnapshot(AuthState.user)).toEqual(userProfile);
+    expect(store.selectSnapshot(AuthState.username)).toBe(userProfile.login);
 
     service.endSession();
 
     expect(service.isAuthenticated()).toBe(false);
+    expect(store.selectSnapshot(AuthState.isAuthenticated)).toBe(false);
+    expect(store.selectSnapshot(AuthState.user)).toBeNull();
+    expect(store.selectSnapshot(AuthState.username)).toBeNull();
     expect(service.hasAdminToken()).toBe(false);
   });
 });

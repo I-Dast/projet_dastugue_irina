@@ -1,14 +1,16 @@
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { Router, provideRouter } from '@angular/router';
+import { provideStore } from '@ngxs/store';
 import { App } from './app';
 import { UserService } from './services/user.service';
+import { AuthState } from './store/auth.state';
 
 describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
-      providers: [provideHttpClient(), provideRouter([])],
+      providers: [provideHttpClient(), provideRouter([]), provideStore([AuthState])],
     }).compileComponents();
   });
 

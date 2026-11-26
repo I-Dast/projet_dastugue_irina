@@ -1,7 +1,10 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
+import { Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { Login, Logout } from '../store/auth.actions';
+import { ADMIN_TOKEN_KEY, hasStoredSession, USER_SESSION_KEY } from './auth-session';
 
 /** Champs effectivement envoyés à l'API ; les données personnelles non nécessaires en sont exclues. */
 export interface SignupRequest {
@@ -35,10 +38,9 @@ export interface AuthenticationResponse extends UserProfile {
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
-  private readonly adminTokenKey = 'pollution.admin-token';
-  private readonly sessionKey = 'pollution.user-session';
   private readonly http = inject(HttpClient);
-  readonly isAuthenticated = signal(this.hasStoredSession());
+  private readonly store = inject(Store);
+  readonly isAuthenticated = signal(hasStoredSession());
   // Le préfixe /api correspond aux routes Express du backend Node.
   private readonly apiEndpoint = `${environment.apiUrl.replace(/\/$/, '')}/api`;
   private readonly usersEndpoint = `${this.apiEndpoint}/users`;
@@ -70,36 +72,41 @@ export class UserService {
 
   startSession(user: AuthenticationResponse): void {
     if (user.isAdmin && user.accessToken) {
-      sessionStorage.setItem(this.adminTokenKey, user.accessToken);
+      sessionStorage.setItem(ADMIN_TOKEN_KEY, user.accessToken);
     } else {
-      sessionStorage.removeItem(this.adminTokenKey);
+      sessionStorage.removeItem(ADMIN_TOKEN_KEY);
     }
-    sessionStorage.setItem(this.sessionKey, 'true');
+    sessionStorage.setItem(USER_SESSION_KEY, 'true');
     this.isAuthenticated.set(true);
+    this.store.dispatch(
+      new Login({
+        id: user.id,
+        login: user.login,
+        nom: user.nom,
+        prenom: user.prenom,
+        email: user.email,
+        telephone: user.telephone,
+        isAdmin: user.isAdmin,
+      }),
+    );
   }
 
   hasAdminToken(): boolean {
-    return sessionStorage.getItem(this.adminTokenKey) !== null;
+    return sessionStorage.getItem(ADMIN_TOKEN_KEY) !== null;
   }
 
   endSession(): void {
-    sessionStorage.removeItem(this.adminTokenKey);
-    sessionStorage.removeItem(this.sessionKey);
+    sessionStorage.removeItem(ADMIN_TOKEN_KEY);
+    sessionStorage.removeItem(USER_SESSION_KEY);
     this.isAuthenticated.set(false);
+    this.store.dispatch(new Logout());
   }
 
   private adminHeaders(): HttpHeaders {
-    const token = sessionStorage.getItem(this.adminTokenKey);
+    const token = sessionStorage.getItem(ADMIN_TOKEN_KEY);
     return token
       ? new HttpHeaders({ Authorization: `Bearer ${token}` })
       : new HttpHeaders();
   }
 
-  private hasStoredSession(): boolean {
-    return (
-      typeof sessionStorage !== 'undefined' &&
-      (sessionStorage.getItem(this.sessionKey) === 'true' ||
-        sessionStorage.getItem(this.adminTokenKey) !== null)
-    );
-  }
 }
