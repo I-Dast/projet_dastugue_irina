@@ -21,7 +21,7 @@ describe('authGuard', () => {
     const result = TestBed.runInInjectionContext(() =>
       authGuard({} as ActivatedRouteSnapshot, { url: '/pollutions' } as RouterStateSnapshot),
     );
-
+    //vérifie qu'une personne authentifiée est redirigée vers /login
     expect(result).toEqual(TestBed.inject(Router).parseUrl('/login'));
   });
 
@@ -39,7 +39,7 @@ describe('authGuard', () => {
     const result = TestBed.runInInjectionContext(() =>
       authGuard({} as ActivatedRouteSnapshot, { url: '/pollutions' } as RouterStateSnapshot),
     );
-
+    //vérifie que le guards autorise l'accè à la page demandée
     expect(result).toBe(true);
   });
 });

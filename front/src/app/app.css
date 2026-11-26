@@ -1,8 +1,10 @@
+/* Le composant racine occupe au minimum toute la hauteur de la fenêtre. */
 :host {
   display: block;
   min-height: 100vh;
 }
 
+/* Bouton de déconnexion fixé dans le coin supérieur droit de l’écran. */
 .logout-button {
   position: fixed;
   z-index: 10;
@@ -21,16 +23,19 @@
   cursor: pointer;
 }
 
+/* Assombrit légèrement l’icône au survol sans ajouter de fond au bouton. */
 .logout-button:hover {
   color: #183d1b;
   background: transparent;
 }
 
+/* Rend le bouton clairement visible lors de la navigation au clavier. */
 .logout-button:focus-visible {
   outline: 3px solid #466b4a;
   outline-offset: 3px;
 }
 
+/* Dimensionne et dessine l’icône SVG avec la couleur du bouton. */
 .logout-button svg {
   width: 2rem;
   height: 2rem;
@@ -41,10 +46,12 @@
   stroke-width: 2.6;
 }
 
+/* La salutation est masquée par défaut, notamment sur les appareils tactiles. */
 .logout-wave {
   display: none;
 }
 
+/* Affiche la salutation uniquement sur les appareils capables de survol précis. */
 @media (hover: hover) and (pointer: fine) {
   .logout-wave {
     position: fixed;
@@ -56,6 +63,7 @@
     transform: translateX(-50%);
   }
 
+  /* Style et animation de la main qui salue. */
   .logout-wave__hand {
     display: block;
     font-size: 1.6rem;
@@ -65,6 +73,7 @@
     animation: logout-wave 700ms ease-in-out infinite;
   }
 
+  /* Texte placé sous la main, avec une ombre pour rester lisible sur le fond. */
   .logout-wave__message {
     display: block;
     margin-top: 0.1rem;
@@ -77,6 +86,7 @@
   }
 }
 
+/* Fait pivoter la main alternativement dans les deux sens pour simuler un signe. */
 @keyframes logout-wave {
   0%,
   100% {
@@ -90,6 +100,7 @@
   }
 }
 
+/* Respecte le réglage système qui demande de réduire les animations. */
 @media (prefers-reduced-motion: reduce) {
   .logout-wave__hand {
     animation: none;

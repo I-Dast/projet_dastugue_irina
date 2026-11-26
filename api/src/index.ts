@@ -52,36 +52,61 @@ const start = async (): Promise<void> => {
     const count = await db.pollutions.count();
     if (count === 0) {
       await db.pollutions.bulkCreate([
-        // Quelques déclarations de démonstration sont insérées uniquement dans une table vide.
+        // Ces exemples fictifs sont insérés uniquement dans une table vide.
         {
-          titreDeclarationDePollution: "Déchets plastiques en centre-ville",
+          titreDeclarationDePollution: "Emballages plastiques sur les berges de l’Ill",
           typePollution: "Plastique",
-          description: "Des déchets plastiques ont été observés près d'un espace public.",
-          dateObservation: "2026-10-18",
-          lieu: "Paris",
-          latitude: 48.8566,
-          longitude: 2.3522,
-          photoUrl: ""
+          description: "Exemple fictif : quelques bouteilles et emballages sont visibles dans l’herbe près du chemin. Aucun déchet n’a été collecté.",
+          dateObservation: "2026-11-24",
+          lieu: "Quai des Bateliers, Strasbourg",
+          latitude: 48.5811,
+          longitude: 7.7525,
+          photoUrl: "",
+          indiceDangerosite: 18
         },
         {
-          titreDeclarationDePollution: "Dépôt sauvage près de la route",
+          titreDeclarationDePollution: "Encombrants déposés près d’un conteneur",
           typePollution: "Dépôt sauvage",
-          description: "Plusieurs encombrants ont été déposés au bord de la route.",
-          dateObservation: "2026-10-18",
-          lieu: "Lyon",
-          latitude: 45.764,
-          longitude: 4.8357,
-          photoUrl: ""
+          description: "Exemple fictif : un matelas et des planches sont déposés à côté d’un point de collecte, sans bloquer la circulation.",
+          dateObservation: "2026-11-22",
+          lieu: "Rue de la Plaine-des-Bouchers, Strasbourg",
+          latitude: 48.5547,
+          longitude: 7.7418,
+          photoUrl: "",
+          indiceDangerosite: 42
         },
         {
-          titreDeclarationDePollution: "Pollution de l'eau",
+          titreDeclarationDePollution: "Eau trouble dans le canal de la Bruche",
           typePollution: "Eau",
-          description: "Une pollution de l'eau a été signalée près de la berge.",
-          dateObservation: "2026-10-17",
-          lieu: "Strasbourg",
-          latitude: 48.5734,
-          longitude: 7.7521,
-          photoUrl: ""
+          description: "Exemple fictif : une coloration trouble est observée depuis la berge après de fortes pluies. La source n’est pas déterminée.",
+          dateObservation: "2026-11-21",
+          lieu: "Canal de la Bruche, Strasbourg",
+          latitude: 48.5791,
+          longitude: 7.7046,
+          photoUrl: "",
+          indiceDangerosite: 55
+        },
+        {
+          titreDeclarationDePollution: "Fumée persistante près d’un axe routier",
+          typePollution: "Air",
+          description: "Exemple fictif : une fumée inhabituelle est signalée près d’un axe routier. Son origine n’a pas été vérifiée.",
+          dateObservation: "2026-11-20",
+          lieu: "Avenue du Rhin, Strasbourg",
+          latitude: 48.5654,
+          longitude: 7.78,
+          photoUrl: "",
+          indiceDangerosite: 35
+        },
+        {
+          titreDeclarationDePollution: "Tache irisée d’origine inconnue sur l’eau",
+          typePollution: "Chimique",
+          description: "Exemple fictif : une tache irisée est visible à la surface de l’eau. La substance n’est pas identifiée et aucun prélèvement n’a été réalisé.",
+          dateObservation: "2026-11-19",
+          lieu: "Bassin Vauban, Strasbourg",
+          latitude: 48.578,
+          longitude: 7.724,
+          photoUrl: "",
+          indiceDangerosite: 70
         }
       ]);
       console.log("Jeu de démonstration inséré dans pollutions.");

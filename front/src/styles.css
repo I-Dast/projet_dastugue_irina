@@ -1,5 +1,6 @@
 @import url('https://azimut.strasbourg.eu/styles/fonts.css');
 
+/* Valeurs communes à toute l’application : thème clair, police et couleur du texte. */
 :root {
   /* Palette globale du TP02, appliquée derrière les pages du TP3. */
   color-scheme: light;
@@ -9,20 +10,24 @@
   background: #e3efc6;
 }
 
+/* Normalise le poids de police, même si les éléments ont une valeur par défaut différente. */
 :where(*) {
   font-weight: 400;
 }
 
+/* Le document occupe toute la hauteur disponible sans marge navigateur. */
 html,
 body {
   min-height: 100%;
   margin: 0;
 }
 
+/* Dégradé de fond de secours, visible si l’image d’arrière-plan ne se charge pas. */
 body {
   background: linear-gradient(160deg, #f0f4c8 0%, #e3efc6 48%, #c8e1b8 100%);
 }
 
+/* Conteneur de l’application et repère de positionnement des calques de fond. */
 .app-shell {
   position: relative;
   isolation: isolate;
@@ -31,6 +36,7 @@ body {
   --pointer-y: -1000px;
 }
 
+/* Deux calques décoratifs réutilisent l’image : un voile général et un éclairage au pointeur. */
 .app-shell::before,
 .app-shell::after {
   position: fixed;
@@ -41,10 +47,12 @@ body {
   background: url('/page-background.png') center / cover no-repeat;
 }
 
+/* Le voile rend l’image de fond discrète derrière le contenu. */
 .app-shell::before {
   opacity: 0.16;
 }
 
+/* Calque lumineux révélé dans un cercle autour du pointeur sur les appareils compatibles. */
 .app-shell::after {
   display: none;
   opacity: 0.68;
@@ -60,6 +68,7 @@ body {
   );
 }
 
+/* N’active l’éclairage que si les masques CSS sont pris en charge et qu’un pointeur précis existe. */
 @supports (mask-image: radial-gradient(circle, #000, transparent)) {
   @media (hover: hover) and (pointer: fine) {
     .app-shell::after {
@@ -68,12 +77,14 @@ body {
   }
 }
 
+/* Sur écran tactile, renforce légèrement le voile : il n’y a pas de pointeur à suivre. */
 @media (hover: none) {
   .app-shell::before {
     opacity: 0.2;
   }
 }
 
+/* Style de base du curseur d’indice : la piste et le curseur sont dessinés séparément. */
 .danger-index-slider {
   min-height: 36px;
   padding: 0;
@@ -84,23 +95,27 @@ body {
   appearance: none;
 }
 
+/* Indique visuellement le focus clavier autour du curseur. */
 .danger-index-slider:focus {
   outline: 3px solid rgb(84 123 88 / 28%);
   outline-offset: 3px;
 }
 
+/* Piste colorée de l’indice pour les navigateurs basés sur WebKit. */
 .danger-index-slider::-webkit-slider-runnable-track {
   height: 12px;
   border-radius: 999px;
   background: linear-gradient(90deg, #40a85f 0%, #b4cf45 25%, #f1cf46 50%, #ef9638 75%, #d94a40 100%);
 }
 
+/* Même piste colorée pour Firefox. */
 .danger-index-slider::-moz-range-track {
   height: 12px;
   border-radius: 999px;
   background: linear-gradient(90deg, #40a85f 0%, #b4cf45 25%, #f1cf46 50%, #ef9638 75%, #d94a40 100%);
 }
 
+/* Apparence du bouton mobile du curseur dans les navigateurs basés sur WebKit. */
 .danger-index-slider::-webkit-slider-thumb {
   width: 24px;
   height: 24px;
@@ -112,6 +127,7 @@ body {
   appearance: none;
 }
 
+/* Apparence équivalente du bouton mobile dans Firefox. */
 .danger-index-slider::-moz-range-thumb {
   width: 18px;
   height: 18px;
@@ -121,6 +137,7 @@ body {
   box-shadow: 0 1px 5px rgb(24 32 51 / 45%);
 }
 
+/* Présentation commune des étiquettes de niveau de danger. */
 .danger-level-badge {
   display: inline-block;
   padding: 0.35rem 0.7rem;
@@ -131,6 +148,7 @@ body {
   white-space: nowrap;
 }
 
+/* Le niveau dangereux utilise un texte blanc pour conserver le contraste sur son fond coloré. */
 .danger-level-badge--dangerous {
   color: #fff;
 }

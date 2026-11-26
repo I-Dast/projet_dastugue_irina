@@ -16,9 +16,12 @@
    npm run dev
    ```
 
-Au démarrage, l'API se connecte à `pollution_db`, crée la table `pollution` si
-elle n'existe pas encore et insère un jeu de données si la table est vide. Dans
-pgAdmin, actualiser **Schemas > public > Tables** pour voir la table.
+Au démarrage, l'API se connecte à `pollution_db`, crée la table `pollutions` si
+elle n'existe pas encore et insère cinq signalements fictifs de démonstration
+uniquement si la table est vide. Les exemples sont situés à Strasbourg et
+couvrent plusieurs types de pollution. Si la table contient déjà des données,
+le jeu de démonstration n'est pas ajouté. Dans pgAdmin, actualiser
+**Schemas > public > Tables** pour voir la table.
 
 ## Tester les routes GET
 
